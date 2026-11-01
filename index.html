@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>진희의 도쿄 출장</title>
-<meta name="description" content="요코가와 본사(무사시노시) 출장 중 들를 만한 근처 맛집, 퇴근 후와 주말 나들이, 저장해둔 도쿄 맛집을 지도로 정리했습니다.">
+<meta name="description" content="요코가와 본사(무사시노시) 출장 중 점심, 퇴근 후, 주말에 갈 곳을 지도와 함께 골라 볼 수 있어요.">
 <meta name="theme-color" content="#1B2330">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Noto+Serif+KR:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 :root{color-scheme:light}
@@ -16,97 +16,145 @@ body{margin:0}
 img{max-width:100%}
 [hidden]{display:none!important}
 
-/* Layout: evening-navy hero with a Chuo-line orange stripe, sticky section chips, then map, near-office food, after-work, weekend trips, saved Tokyo lists, tips. */
+/* Layout: compact navy hero → time-aware "지금 갈 곳" picks → list + sticky map (split on desktop, toggle on mobile) → weekend cards → saved Tokyo lists (accordions) → tips. */
 :root{
-  --bg:#F5F3EF; --surface:#FFFFFF; --ink:#1B2230; --muted:#5D6675; --line:#E5E1DA;
-  --accent:#C2490C; --accent-soft:#FBE9DE;
-  --hero:#1B2330; --hero-ink:#FFFFFF; --hero-muted:#B9C2D0;
+  --bg:#F6F4F0; --surface:#FFFFFF; --ink:#18202C; --muted:#5D6675; --faint:#8A93A1; --line:#E7E3DC;
+  --accent:#D9480F; --accent-soft:#FDEBE1;
+  --hero:#18202C; --hero-ink:#FFFFFF; --hero-muted:#AEB8C7;
   --chuo:#F15A22; --ginkgo:#E0A800;
-  --hq:#1B2230; --mitaka:#C2490C; --kichi:#2F6FB0; --sakai:#13827C; --spot:#7A52B3; --saved:#B23F68;
-  --ok:#1F6B4A; --ok-bg:#DDEFE6; --warn:#7A5000; --warn-bg:#F7E8C4; --crit:#A3281F; --crit-bg:#F6DAD6;
-  --shadow:0 1px 2px rgba(20,30,45,.06),0 4px 16px rgba(20,30,45,.06);
-  --font-display:"Noto Serif KR","Nanum Myeongjo","Apple Myungjo",serif;
+  --mitaka:#D9480F; --kichi:#2F6FB0; --sakai:#13827C; --spot:#7A52B3; --saved:#B23F68;
+  --top:#B4540A; --top-bg:#FFF1D6;
+  --crit:#A3281F; --crit-bg:#F9E0DC;
+  --shadow:0 1px 2px rgba(20,30,45,.05),0 6px 20px rgba(20,30,45,.06);
+  --shadow-lg:0 2px 4px rgba(20,30,45,.06),0 12px 32px rgba(20,30,45,.10);
+  --font-display:"Noto Serif KR","Nanum Myeongjo",serif;
   --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#10141A; --surface:#181E27; --ink:#E8ECF1; --muted:#9DA7B5; --line:#2A323F;
+    --bg:#0F131A; --surface:#181E28; --ink:#E9EDF2; --muted:#9EA8B6; --faint:#6F7987; --line:#283140;
     --accent:#FF8A50; --accent-soft:#3A2418;
-    --hero:#121822; --hero-ink:#F1F4F8; --hero-muted:#9FAABD;
-    --hq:#E8ECF1; --mitaka:#FF8A50; --kichi:#7FB0E8; --sakai:#4FC2B9; --spot:#B597EC; --saved:#E57CA3;
-    --ok:#7FD1A5; --ok-bg:#17352A; --warn:#E8B85A; --warn-bg:#3A2E12; --crit:#F09A90; --crit-bg:#3C1D1A;
-    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+    --hero:#121822; --hero-ink:#F1F4F8; --hero-muted:#97A3B6;
+    --mitaka:#FF8A50; --kichi:#7FB0E8; --sakai:#4FC2B9; --spot:#B597EC; --saved:#E57CA3;
+    --top:#F3C064; --top-bg:#3A2C10; --crit:#F09A90; --crit-bg:#3C1D1A;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+    --shadow-lg:0 2px 4px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.35);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#10141A; --surface:#181E27; --ink:#E8ECF1; --muted:#9DA7B5; --line:#2A323F;
+  --bg:#0F131A; --surface:#181E28; --ink:#E9EDF2; --muted:#9EA8B6; --faint:#6F7987; --line:#283140;
   --accent:#FF8A50; --accent-soft:#3A2418;
-  --hero:#121822; --hero-ink:#F1F4F8; --hero-muted:#9FAABD;
-  --hq:#E8ECF1; --mitaka:#FF8A50; --kichi:#7FB0E8; --sakai:#4FC2B9; --spot:#B597EC; --saved:#E57CA3;
-  --ok:#7FD1A5; --ok-bg:#17352A; --warn:#E8B85A; --warn-bg:#3A2E12; --crit:#F09A90; --crit-bg:#3C1D1A;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  --hero:#121822; --hero-ink:#F1F4F8; --hero-muted:#97A3B6;
+  --mitaka:#FF8A50; --kichi:#7FB0E8; --sakai:#4FC2B9; --spot:#B597EC; --saved:#E57CA3;
+  --top:#F3C064; --top-bg:#3A2C10; --crit:#F09A90; --crit-bg:#3C1D1A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+  --shadow-lg:0 2px 4px rgba(0,0,0,.35),0 12px 32px rgba(0,0,0,.35);
   color-scheme:dark;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font:15px/1.65 var(--font-body);word-break:keep-all;overflow-wrap:anywhere;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--font-body);word-break:keep-all;overflow-wrap:anywhere;-webkit-text-size-adjust:100%}
 a{color:var(--accent)}
+button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
 /* hero */
-.hero{background:var(--hero);color:var(--hero-ink);padding-top:max(40px,env(safe-area-inset-top,0px))}
-.hero .wrap{padding-bottom:68px}
-.kicker{font:500 12px/1 var(--font-mono);letter-spacing:.12em;color:var(--hero-muted);margin:0 0 12px}
-h1{font:700 clamp(32px,8vw,52px)/1.15 var(--font-display);margin:0 0 12px;text-wrap:balance}
-.hero .sub{color:var(--hero-muted);margin:0;font-size:15px;max-width:620px}
-.band{height:10px;background:linear-gradient(90deg,var(--chuo) 0 70%,var(--ginkgo) 70% 100%)}
-.meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:-50px 0 0;position:relative}
-.meta div{background:var(--surface);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);min-width:0}
-.meta dt{font:500 11px/1 var(--font-mono);letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
-.meta dd{margin:0;font-weight:600;font-size:14px;line-height:1.45}
-.meta dd small{display:block;font-weight:400;color:var(--muted);font-size:12.5px}
+.hero{background:var(--hero);color:var(--hero-ink);padding-top:max(28px,env(safe-area-inset-top,0px))}
+.hero .wrap{padding-bottom:22px}
+.kicker{font:500 11.5px/1 var(--font-mono);letter-spacing:.12em;color:var(--hero-muted);margin:0 0 10px}
+h1{font:700 clamp(28px,6vw,40px)/1.2 var(--font-display);margin:0 0 14px}
+.facts{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.facts li{font-size:13px;color:var(--hero-ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:6px 11px;white-space:nowrap}
+.facts li b{font-weight:600;color:var(--hero-muted);margin-right:5px}
+.band{height:6px;background:linear-gradient(90deg,var(--chuo) 0 72%,var(--ginkgo) 72% 100%)}
 
 /* sticky nav */
-.navbar{position:sticky;top:0;z-index:1100;margin-top:20px;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.navbar{position:sticky;top:0;z-index:1100;background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:none;display:inline-flex;align-items:center;gap:6px;font:500 13px/1 var(--font-body);padding:9px 13px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink);background:var(--surface);white-space:nowrap;cursor:pointer}
-.chip i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--accent));flex:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:6px;font:500 13.5px/1 var(--font-body);padding:9px 13px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink);background:var(--surface);white-space:nowrap;cursor:pointer}
 .chip[aria-current="true"],.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.chip[aria-pressed="true"] i{box-shadow:0 0 0 2px var(--bg)}
-.chip .n{font:500 11px/1 var(--font-mono);opacity:.7}
+.chip .e{font-size:15px;line-height:1}
 
-main{padding-bottom:max(56px,env(safe-area-inset-bottom,0px))}
-section{scroll-margin-top:64px;margin-top:40px}
-h2{font:700 22px/1.3 var(--font-display);margin:0 0 8px;text-wrap:balance}
-h3.sub{font:700 17px/1.3 var(--font-display);margin:26px 0 10px;display:flex;align-items:center;gap:8px}
-h3.sub i{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
-.lead{color:var(--muted);margin:0 0 14px;font-size:14px;max-width:760px}
-.card{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:18px}
+main{padding-bottom:max(64px,env(safe-area-inset-bottom,0px))}
+section{scroll-margin-top:60px;margin-top:44px}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:0 0 14px;flex-wrap:wrap}
+h2{font:700 24px/1.25 var(--font-display);margin:0}
+.lead{color:var(--muted);margin:4px 0 0;font-size:14px}
 
-/* tags */
-.tag{display:inline-block;font:500 11px/1 var(--font-mono);padding:4px 7px;border-radius:999px;white-space:nowrap}
-.tag.ok{color:var(--ok);background:var(--ok-bg)}
-.tag.warn{color:var(--warn);background:var(--warn-bg)}
-.tag.crit{color:var(--crit);background:var(--crit-bg)}
-.tag.gold{color:#6B4E00;background:#F8E7A8}
-:root[data-theme="dark"] .tag.gold{color:#F3D27A;background:#3A3010}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag.gold{color:#F3D27A;background:#3A3010}}
+/* now picks */
+#now{margin-top:24px}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px;box-shadow:var(--shadow)}
+.seg button{border:0;background:none;padding:9px 16px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted);white-space:nowrap}
+.seg button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.pick{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.pick .art{position:relative;height:120px;display:flex;align-items:center;justify-content:center;font-size:56px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 22%,var(--surface)),color-mix(in srgb,var(--c) 8%,var(--surface)))}
+.pick .rank{position:absolute;top:12px;left:12px;font:500 11px/1 var(--font-mono);letter-spacing:.06em;background:var(--surface);color:var(--ink);padding:6px 8px;border-radius:999px}
+.pick .bd{padding:16px 16px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.pick .hl{font:700 19px/1.3 var(--font-body);margin:0}
+.pick .nm{font-size:13.5px;color:var(--muted)}
+.pick p{margin:0;font-size:14px;color:var(--ink)}
+.pick .acts{margin-top:auto;padding-top:6px}
+.nowtip{margin:14px 0 0;padding:12px 14px;border-radius:12px;background:var(--surface);box-shadow:var(--shadow);font-size:14px;color:var(--muted)}
+.nowtip b{color:var(--ink)}
 
-/* map */
-.mapcard{padding:0;overflow:hidden}
-.mapfilter{display:flex;gap:6px;overflow-x:auto;padding:12px;scrollbar-width:none;border-bottom:1px solid var(--line)}
-.mapfilter::-webkit-scrollbar{display:none}
-#map{height:min(62vh,520px);min-height:320px;background:var(--line)}
-.mapnote{margin:0;padding:10px 14px;font-size:12.5px;color:var(--muted)}
-.mapfail{padding:40px 16px;text-align:center;color:var(--muted)}
-.pin{width:16px;height:16px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
-.pin.spot{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center}
+/* meta line + badges */
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:13px;color:var(--muted)}
+.meta .walk{color:var(--c);font-weight:600}
+.star{font:500 13px/1 var(--font-mono);color:var(--ink)}
+.star.top{color:var(--top);font-weight:700}
+.badge{display:inline-block;font:600 11px/1 var(--font-body);padding:5px 7px;border-radius:6px;white-space:nowrap}
+.badge.top{color:var(--top);background:var(--top-bg)}
+.badge.rsv{color:var(--crit);background:var(--crit-bg)}
+.btn{display:inline-flex;align-items:center;gap:5px;font:500 13px/1 var(--font-body);padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;cursor:pointer}
+.btn.pri{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn svg{width:14px;height:14px;flex:none}
+.acts{display:flex;flex-wrap:wrap;gap:6px}
+
+/* explore: list + map */
+.tools{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.tools .chips{padding:0}
+.areaseg{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13.5px;align-items:center}
+.areaseg button{border:0;background:none;padding:4px 0;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;white-space:nowrap}
+.areaseg button[aria-pressed="true"]{color:var(--ink);border-color:var(--ink)}
+.areaseg .sun{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--ink);white-space:nowrap;flex:none}
+.areaseg .sun input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px;align-items:start}
+.listpane{min-width:0}
+.mappane{position:sticky;top:64px;height:calc(100vh - 80px);max-height:760px;min-height:420px;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);background:var(--line);display:flex;flex-direction:column}
+.mapbar{display:flex;gap:6px;padding:10px;background:var(--surface);border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.mapbar .chip{padding:7px 11px;font-size:12.5px}
+.mapbar .chip i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+#map{flex:1;min-height:0}
+.count{font-size:13px;color:var(--muted);margin:0 2px 8px}
+.list{list-style:none;margin:0;padding:0;background:var(--surface);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.item + .item{border-top:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;background:none;text-align:left;cursor:pointer}
+.row:hover,.item.hot .row{background:color-mix(in srgb,var(--c) 7%,var(--surface))}
+.tile{flex:none;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+.row .tx{flex:1;min-width:0}
+.row .hl{display:block;font-weight:600;font-size:15px;line-height:1.35}
+.row .sub{display:block;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .rt{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.row .chev{width:16px;height:16px;color:var(--faint);transition:transform .15s}
+.item.open .chev{transform:rotate(180deg)}
+.detail{padding:2px 14px 16px 72px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.detail .hr{color:var(--muted);font-size:13.5px}
+.detail .hr b{color:var(--ink);font-weight:600;margin-right:4px}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+.legend{font-size:12.5px;color:var(--muted);margin:10px 2px 0}
+.viewtoggle{display:none}
+
+/* map pins */
+.pin{width:16px;height:16px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transition:transform .15s}
+.pin.on{transform:scale(1.7);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 35%,transparent),0 1px 4px rgba(0,0,0,.4)}
+.pin.spot{width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center}
 .pin.spot span{transform:rotate(45deg);font:700 12px/1 var(--font-body);color:#fff}
-.pin.hq{width:34px;height:34px;border-radius:10px;background:#1B2230;display:flex;align-items:center;justify-content:center;font:700 11px/1 var(--font-mono);color:#fff;border-color:var(--chuo)}
+.pin.hq{width:36px;height:36px;border-radius:10px;background:#18202C;display:flex;align-items:center;justify-content:center;font:700 11px/1 var(--font-mono);color:#fff;border:2px solid var(--chuo)}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface);color:var(--ink)}
 .leaflet-popup-content{margin:12px 14px;font:14px/1.5 var(--font-body)}
 .leaflet-popup-content b{display:block;font-size:15px}
@@ -115,70 +163,73 @@ h3.sub i{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
 .leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
 .leaflet-control-attribution{font-size:10px}
 .tiles-dark{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9)}
+.mapfail{padding:40px 16px;text-align:center;color:var(--muted)}
 
-/* food filter + cards */
-.filters{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 4px}
-.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
-.rst{display:flex;flex-direction:column;gap:8px;padding:16px;border-top:3px solid var(--c);min-width:0}
-.rst .top{display:flex;gap:12px;align-items:flex-start}
-.rst .l{flex:1;min-width:0}
-.rst .nm{font-weight:600;font-size:16px;line-height:1.4}
-.rst .ja{display:block;font-size:12.5px;color:var(--muted);font-weight:400}
-.rst .gn{font-size:13px;color:var(--muted)}
-.sc{flex:none;font:500 15px/1 var(--font-mono);font-variant-numeric:tabular-nums;text-align:center;padding:8px 9px;border-radius:10px;background:var(--accent-soft);color:var(--accent);min-width:58px}
-.sc small{display:block;font-size:9.5px;margin-top:4px;color:var(--muted)}
-.rst .tags{display:flex;flex-wrap:wrap;gap:5px}
-.rst p{margin:0;font-size:14px}
-.rst .hr{font-size:13px;color:var(--muted)}
-.rst .hr b{color:var(--ink);font-weight:500}
-.walk{font:500 12px/1 var(--font-mono);color:var(--c);white-space:nowrap}
-.acts{margin-top:auto;padding-top:4px;display:flex;flex-wrap:wrap;gap:6px}
-.btn{display:inline-flex;align-items:center;gap:5px;font:500 13px/1 var(--font-body);padding:8px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;cursor:pointer}
-.btn.pinbtn{border-color:transparent;background:color-mix(in srgb,var(--c) 14%,var(--surface))}
-.btn svg{width:14px;height:14px;flex:none}
-.empty{color:var(--muted);font-size:14px;padding:8px 2px}
+/* weekend */
+.spots{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.spot{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.spot .hd{display:flex;gap:12px;align-items:center}
+.spot .tile{width:52px;height:52px;font-size:28px;--c:var(--spot)}
+.spot h3{font:700 17px/1.3 var(--font-body);margin:0}
+.spot .no{font:500 11px/1 var(--font-mono);color:var(--spot);letter-spacing:.06em}
+.facts2{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.facts2 li{font-size:12.5px;background:var(--bg);border-radius:8px;padding:5px 8px;white-space:nowrap}
+.spot p{margin:0;font-size:14px;color:var(--muted)}
+.eat{display:flex;flex-wrap:wrap;gap:6px;font-size:13px}
+.eat span{color:var(--faint);font-size:12.5px;width:100%}
+.eat a{display:inline-flex;gap:4px;align-items:center;text-decoration:none;color:var(--ink);background:var(--bg);border-radius:999px;padding:6px 10px}
+.spot .acts{margin-top:auto}
 
-/* spots */
-.spots{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
-.spot{padding:0;overflow:hidden;display:flex;flex-direction:column}
-.spot .hd{display:flex;gap:12px;align-items:center;padding:16px 16px 0}
-.spot .no{flex:none;width:40px;height:40px;border-radius:12px;background:var(--spot);color:#fff;display:flex;align-items:center;justify-content:center;font:700 18px/1 var(--font-display)}
-.spot .ttl{font:700 17px/1.3 var(--font-display);margin:0}
-.spot .when{font:500 12px/1.3 var(--font-mono);color:var(--muted)}
-.spot .bd{padding:10px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
-.spot p{margin:0;font-size:14px}
-.spot .go{font-size:13px;color:var(--muted)}
-.spot .eats{list-style:none;margin:2px 0 0;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:13.5px}
-.spot .eats li + li{margin-top:4px}
-.spot .eats b{font-weight:600}
-
-/* saved lists */
-.saved{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
-.saved h3{font:700 16px/1.3 var(--font-display);margin:0 0 2px}
-.saved .tm{font:500 12px/1.4 var(--font-mono);color:var(--muted);margin:0 0 6px}
-.rows{list-style:none;margin:0;padding:0}
-.rows li{border-top:1px solid var(--line)}
-.rows a{display:flex;justify-content:space-between;gap:10px;padding:9px 0;color:var(--ink);text-decoration:none;font-size:14px}
-.rows a::after{content:"↗";color:var(--muted);font-size:12px}
+/* saved */
+.saved{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;align-items:start}
+.acc{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.acc summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary .tx{flex:1;min-width:0}
+.acc summary b{display:block;font-size:16px}
+.acc summary small{color:var(--muted);font-size:12.5px}
+.acc summary .n{font:500 12px/1 var(--font-mono);color:var(--muted);background:var(--bg);border-radius:999px;padding:6px 9px}
+.acc[open] .chev{transform:rotate(180deg)}
+.acc .chev{width:16px;height:16px;color:var(--faint);transition:transform .15s}
+.srows{list-style:none;margin:0;padding:0 8px 8px}
+.srows a{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;color:var(--ink);text-decoration:none;font-size:14px}
+.srows a:hover{background:var(--bg)}
+.srows .e{width:22px;text-align:center;flex:none}
+.srows .g{margin-left:auto;font-size:12px;color:var(--faint);white-space:nowrap}
+.fine{color:var(--muted);font-size:13px;margin:12px 2px 0}
 
 /* tips */
-.tips{list-style:none;margin:0;padding:0;display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
-.tips li{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px 14px 18px;border-left:4px solid var(--c,var(--accent))}
-.tips b{display:block;margin-bottom:4px}
-.tips p{margin:0;color:var(--muted);font-size:14px}
+.tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;list-style:none;margin:0;padding:0}
+.tips li{display:flex;gap:12px;background:var(--surface);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px}
+.tips .e{font-size:22px;line-height:1.2;flex:none}
+.tips b{display:block;margin-bottom:2px}
+.tips p{margin:0;color:var(--muted);font-size:13.5px}
+.srcs{padding-left:18px;margin:0;font-size:13.5px;columns:2 320px;column-gap:28px;color:var(--muted)}
+.srcs li{margin:0 0 6px;break-inside:avoid}
+footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
 
-.fine{color:var(--muted);font-size:13px;margin:14px 2px 0}
-.srcs{padding-left:18px;margin:0;font-size:14px;columns:2 320px;column-gap:28px}
-.srcs li{margin:0 0 8px;break-inside:avoid}
-footer{margin-top:32px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
-
-@media (max-width:760px){
-  .meta{grid-template-columns:1fr 1fr}
+@media (max-width:900px){
+  .picks{grid-template-columns:minmax(0,1fr);gap:10px}
+  .pick{flex-direction:row}
+  .pick .art{width:96px;height:auto;min-height:100%;font-size:40px;flex:none}
+  .pick .rank{top:8px;left:8px;font-size:10px;padding:4px 6px}
+  .pick .bd{padding:14px}
+  .pick .hl{font-size:17px}
+  .pick p{display:none}
+  .split{grid-template-columns:minmax(0,1fr)}
+  .viewtoggle{display:inline-flex}
+  .mappane{position:relative;top:0;height:68vh;min-height:360px;max-height:none}
+  .split[data-view="list"] .mappane{display:none}
+  .split[data-view="map"] .listpane{display:none}
 }
-@media (max-width:400px){
-  .grid,.spots,.saved,.tips{grid-template-columns:minmax(0,1fr)}
+@media (max-width:520px){
+  .seg{width:100%}
+  .seg button{flex:1;padding:10px 6px}
+  .detail{padding-left:14px}
+  .spots,.saved,.tips{grid-template-columns:minmax(0,1fr)}
+  h2{font-size:21px}
 }
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.pin,.chev{transition:none}}
 </style>
 </head>
 <body>
@@ -186,76 +237,81 @@ footer{margin-top:32px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
   <div class="wrap">
     <p class="kicker">MUSASHINO · YOKOGAWA HQ · 2026 NOV</p>
     <h1>진희의 도쿄 출장</h1>
-    <p class="sub">요코가와 본사가 있는 무사시노시 나카초 근처 맛집, 퇴근 후 들를 곳, 주말 나들이를 지도와 함께 정리했어요. 맨 아래에는 예전에 저장해둔 도쿄 맛집도 지역별로 모아 뒀어요.</p>
+    <ul class="facts">
+      <li><b>회사</b>요코가와 본사 · 무사시노시 나카초</li>
+      <li><b>역</b>미타카역 북쪽 출구 7분</li>
+      <li><b>신주쿠</b>주오선 18분</li>
+      <li><b>11월</b>단풍 절정 중순~12월 초</li>
+    </ul>
   </div>
   <div class="band"></div>
 </header>
-
-<div class="wrap">
-  <dl class="meta">
-    <div><dt>회사</dt><dd>요코가와 본사<small>무사시노시 나카초 2-9-32</small></dd></div>
-    <div><dt>가까운 역</dt><dd>JR 미타카역 북쪽 출구<small>도보 약 7분</small></dd></div>
-    <div><dt>신주쿠까지</dt><dd>주오선 쾌속 약 18분<small>기치조지는 한 정거장</small></dd></div>
-    <div><dt>11월에는</dt><dd>단풍과 은행잎<small>11월 중순~12월 초가 절정</small></dd></div>
-  </dl>
-</div>
 
 <nav class="navbar" aria-label="섹션 이동">
   <div class="wrap"><div class="chips" id="nav"></div></div>
 </nav>
 
 <main class="wrap">
-  <section id="mapsec">
-    <h2>지도</h2>
-    <p class="lead">검은 사각형이 회사예요. 색으로 지역을 나눴고, 보라색 번호 핀은 주말에 가볼 곳이에요. 핀을 누르면 구글 지도와 타베로그 링크가 열려요.</p>
-    <div class="card mapcard">
-      <div class="mapfilter" id="mapFilter" role="group" aria-label="지도에 표시할 항목"></div>
-      <div id="map" role="region" aria-label="맛집과 볼거리 지도"></div>
-      <p class="mapnote">가게 핀은 타베로그 좌표, 볼거리는 OpenStreetMap 좌표예요. 회사 핀은 나카초 2초메 기준이라 정확한 정문 위치는 아니에요.</p>
+  <section id="now">
+    <div class="sh">
+      <div><h2 id="nowTitle">지금 갈 곳</h2><p class="lead" id="nowLead"></p></div>
+      <div class="seg" role="tablist" aria-label="상황 선택" id="nowTabs"></div>
+    </div>
+    <div class="picks" id="picks"></div>
+    <p class="nowtip" id="nowTip"></p>
+  </section>
+
+  <section id="explore">
+    <div class="sh">
+      <div><h2>맛집 전체</h2><p class="lead">타베로그 평점 상위권으로 38곳을 골랐어요. 줄을 누르면 자세히 보여요.</p></div>
+      <div class="seg viewtoggle" role="tablist" aria-label="보기 방식" id="viewTabs">
+        <button type="button" role="tab" data-v="list" aria-selected="true">목록</button>
+        <button type="button" role="tab" data-v="map" aria-selected="false">지도</button>
+      </div>
+    </div>
+    <div class="tools">
+      <div class="chips" id="genreChips" role="group" aria-label="장르"></div>
+      <div class="areaseg" id="areaSeg" role="group" aria-label="지역"></div>
+    </div>
+    <div class="split" id="split" data-view="list">
+      <div class="listpane">
+        <p class="count" id="count"></p>
+        <ul class="list" id="list"></ul>
+        <p class="legend">★ 타베로그 평점. 3.5 이상이면 맛집, <b style="color:var(--top)">3.7 이상</b>이면 도쿄에서도 상위권이에요. '백명점'은 장르별 상위 100곳에 뽑힌 가게예요.</p>
+      </div>
+      <div class="mappane" id="mappane">
+        <div class="mapbar" id="mapBar" role="group" aria-label="지도 표시"></div>
+        <div id="map" role="region" aria-label="지도"></div>
+      </div>
     </div>
   </section>
 
-  <section id="food">
-    <h2>회사 근처와 중앙선 맛집</h2>
-    <p class="lead">타베로그 평점순으로 미타카, 기치조지, 무사시사카이에서 골랐어요. 빵집과 디저트 가게는 대부분 뺐어요. "도보 약 N분"은 회사에서 직선거리로 계산한 추정치예요.</p>
-    <div class="filters" id="foodFilter" role="group" aria-label="맛집 필터"></div>
-    <div id="foodList"></div>
-    <p class="fine">평점과 영업시간은 2026년 11월 1일 타베로그 한국어판 기준이에요. 일요일에 쉬는 곳이 많고, 라멘집은 재료가 떨어지면 일찍 닫아요. 백명점(百名店)은 타베로그가 장르별로 뽑는 상위 100곳이에요.</p>
-  </section>
-
-  <section id="evening">
-    <h2>퇴근 후 저녁</h2>
-    <p class="lead">평일 저녁은 회사에서 걸어가거나 한두 정거장만 이동하는 코스로 잡았어요.</p>
-    <ul class="tips" id="eveningList"></ul>
-  </section>
-
   <section id="weekend">
-    <h2>주말에 가볼 곳</h2>
-    <p class="lead">미타카에서 1시간 안쪽으로 갈 수 있는 곳이에요. 11월이라 단풍 명소를 앞에 뒀어요. 각 장소 아래에 근처에서 먹을 곳을 붙였어요.</p>
-    <div class="spots" id="spotList"></div>
+    <div class="sh"><div><h2>주말에 가볼 곳</h2><p class="lead">미타카에서 1시간 안. 11월이라 단풍 명소를 앞에 뒀어요.</p></div></div>
+    <div class="spots" id="spots"></div>
   </section>
 
   <section id="saved">
-    <h2>예전에 저장해둔 도쿄 맛집</h2>
-    <p class="lead">구글 지도 리스트 6개(롯폰기, 시부야, 신주쿠, 우에노, 긴자, 도쿄)를 실제 위치 기준으로 다시 나눴어요. 주말에 도심으로 나갈 때 쓰면 돼요. 이름을 누르면 저장해둔 구글 지도 장소가 열려요.</p>
+    <div class="sh"><div><h2>예전에 저장해둔 도쿄 맛집</h2><p class="lead">구글 지도 리스트 6개를 실제 위치 기준으로 나눴어요. 도심에 나갈 때 열어 보세요.</p></div>
+      <button class="btn" type="button" id="savedOnMap">지도에서 보기</button></div>
     <div class="saved" id="savedList"></div>
-    <p class="fine">"신주쿠 맛집" 리스트에 있던 하쿠슈 테판야키, 키라쿠는 시부야로, 카마메시 하루는 아사쿠사로, 야겐보리는 아카사카로 옮겼어요. 주소만 저장된 니시신주쿠 7초메와 오쿠보 후쿠카 빌딩은 가게를 특정할 수 없어 뺐어요.</p>
+    <p class="fine">주소만 저장된 곳(니시신주쿠 7초메, 오쿠보 후쿠카 빌딩)은 가게를 특정할 수 없어 뺐어요.</p>
   </section>
 
   <section id="tips">
-    <h2>알아두면 좋은 것</h2>
+    <div class="sh"><div><h2>알아두면 좋은 것</h2></div></div>
     <ul class="tips" id="tipList"></ul>
   </section>
 
   <section>
-    <h2>출처</h2>
+    <div class="sh"><div><h2 style="font-size:18px">출처</h2></div></div>
     <ul class="srcs">
       <li><a href="https://tabelog.com/kr/tokyo/A1320/A132002/rstLst/?SrtT=rt" target="_blank" rel="noopener">타베로그 미타카 평점순</a></li>
       <li><a href="https://tabelog.com/kr/tokyo/A1320/A132001/rstLst/?SrtT=rt" target="_blank" rel="noopener">타베로그 기치조지 평점순</a></li>
       <li><a href="https://tabelog.com/en/tokyo/A1320/A132003/rstLst/?SrtT=rt" target="_blank" rel="noopener">타베로그 무사시사카이 평점순</a></li>
       <li><a href="https://www.fodors.com/world/asia/japan/tokyo/mitaka-and-musashino/restaurants" target="_blank" rel="noopener">Fodor's 미타카·무사시노 레스토랑</a></li>
       <li><a href="https://retty.me/area/PRE13/ARE663/SUB1203/STAN1538/LCAT12/CAT80/" target="_blank" rel="noopener">Retty 미타카역 야키토리</a></li>
-      <li><a href="https://www.r-agent.com/viewjob/jka25d3c2d95cb43ba/" target="_blank" rel="noopener">요코가와 본사 위치(미타카역 도보 7분) 채용 공고</a></li>
+      <li><a href="https://www.r-agent.com/viewjob/jka25d3c2d95cb43ba/" target="_blank" rel="noopener">요코가와 본사 위치(채용 공고)</a></li>
       <li><a href="https://l-tike.com/ghibli/" target="_blank" rel="noopener">지브리 미술관 티켓(로손 티켓)</a></li>
       <li><a href="https://koyo.walkerplus.com/topics/article/1222701/" target="_blank" rel="noopener">쇼와기념공원 황엽·단풍 축제 2026</a></li>
       <li><a href="https://tenki.jp/kouyou/3/16/32202.html" target="_blank" rel="noopener">tenki.jp 이노카시라 공원 단풍 예상</a></li>
@@ -263,7 +319,7 @@ footer{margin-top:32px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
     </ul>
   </section>
 
-  <footer>마지막 확인 2026-11-01. 영업시간과 휴무일은 가기 전에 타베로그나 구글 지도에서 다시 확인하세요.</footer>
+  <footer>마지막 확인 2026-11-01. 영업시간은 가기 전에 타베로그나 구글 지도에서 다시 확인하세요.</footer>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -273,191 +329,194 @@ footer{margin-top:32px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
   var GMAP = function(q){ return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q); };
   var TABE = function(area,id){ return "https://tabelog.com/kr/tokyo/A1320/"+area+"/"+id+"/"; };
   var CID = function(c){ return "https://maps.google.com/?cid=" + c; };
-  var ICON_MAP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
   var ICON_OUT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>';
+  var ICON_PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
+  var CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 
   var AREAS = {
-    mitaka:{ lbl:"미타카 (회사 근처)", short:"미타카", c:"var(--mitaka)", code:"A132002" },
-    kichi:{ lbl:"기치조지 (한 정거장)", short:"기치조지", c:"var(--kichi)", code:"A132001" },
-    sakai:{ lbl:"무사시사카이 (한 정거장)", short:"무사시사카이", c:"var(--sakai)", code:"A132003" }
+    mitaka:{ lbl:"미타카", c:"var(--mitaka)", code:"A132002" },
+    kichi:{ lbl:"기치조지", c:"var(--kichi)", code:"A132001" },
+    sakai:{ lbl:"무사시사카이", c:"var(--sakai)", code:"A132003" }
+  };
+  var GENRES = {
+    ramen:{ lbl:"라멘", e:"🍜" }, noodle:{ lbl:"소바·우동", e:"🥢" }, meat:{ lbl:"고기", e:"🥩" },
+    drink:{ lbl:"야키토리·술", e:"🍢" }, western:{ lbl:"카레·양식", e:"🍛" }, etc:{ lbl:"정식·중식", e:"🍱" }, sweet:{ lbl:"디저트", e:"🍡" }
   };
 
-  // Tabelog (kr) data, 2026-11-01. m: L=lunch, D=dinner. sun: open on Sunday. hm: 百名店 year.
+  // Tabelog (kr) data, 2026-11-01. k: genre, hl: what to eat (headline), m: L lunch / D dinner, sun: open Sunday, hm: 百名店.
   var food = [
-    { a:"mitaka", id:"13207054", n:"라멘 스코야카", ja:"ラーメン 健やか", sc:"3.78", g:"라멘 · 츠케멘", hm:"라멘 2025", m:"LD", sun:true, ll:[35.70376,139.56432],
-      h:"매일 11:00–15:00, 18:00–21:00", d:"회사에서 가장 가까운 상위권 라멘집. 조개와 닭 육수의 시오라멘, 국산 밀 자가제면 츠케멘이 대표 메뉴예요. 예약 불가." },
-    { a:"mitaka", id:"13187433", n:"야키토리 야마모토", ja:"焼鳥 山もと", sc:"3.77", g:"야키토리 · 1인 6,000~8,000엔", hm:"야키토리 2025", m:"D", sun:false, ll:[35.70501,139.56268], rsv:true,
-      h:"월–토 18:00–23:00 · 일 휴무", d:"북쪽 출구 도보 5분, 지하 카운터. 완전 예약제이고 전화 예약은 안 받아서 타베로그나 토레타로 온라인 예약해야 해요. 10년 숙성 준마이슈를 데워 내는 걸로 유명해요." },
-    { a:"mitaka", id:"13291810", n:"시치조", ja:"七條", sc:"3.71", g:"양식 · 1,000~2,000엔", hm:"양식 2025", m:"LD", sun:true, ll:[35.70179,139.56234],
-      h:"월·목–일 11:30–14:00, 18:00–20:30 · 화·수 휴무", d:"새우튀김(타르타르), 게살 크림 고로케, 모둠 튀김 정식이 인기예요. 저녁만 예약돼요." },
-    { a:"mitaka", id:"13109995", n:"주카소바 미타카", ja:"中華そば みたか", sc:"3.72", g:"라멘 · 1,000엔 미만", m:"LD", sun:true, ll:[35.70101,139.56122],
-      h:"화–일 11:00–14:00, 17:00–20:30 · 월, 첫째·셋째 일 휴무", d:"문 닫은 노포의 맛을 이어받은 쇼유 라멘집. 완탄멘과 차슈완탄멘이 단골 메뉴예요." },
-    { a:"mitaka", id:"13241092", n:"원조 스태미나 만점 라멘 스즈키", ja:"元祖スタミナ満点らーめん すず鬼", sc:"3.77", g:"라멘 · 1,000엔 미만", hm:"라멘 2025", m:"D", sun:false, ll:[35.69979,139.56126],
-      h:"월–목 18:00–24:00, 금·토 ~01:00 · 일 휴무", d:"밤에만 여는 스태미나 소바집. 매운 버전과 츠케멘도 많이 시켜요. 야근하고 늦게 먹기 좋아요." },
-    { a:"mitaka", id:"13215409", n:"도리코쿠 주카 스즈키", sc:"3.75", g:"라멘 · 1,000엔 미만", hm:"라멘 2021", m:"L", sun:false, ll:[35.69979,139.56127],
-      h:"화–토 11:00–15:00 · 월·일 휴무", d:"위 스즈키와 같은 건물에서 점심에만 여는 진한 닭 육수 라멘집이에요." },
-    { a:"mitaka", id:"13117283", n:"우동 스탠드 고즈", ja:"ウドンスタンド 五頭", sc:"3.63", g:"우동 · 이자카야", hm:"우동 2024", m:"LD", sun:false, ll:[35.70734,139.56072], rsv:true,
-      h:"월–토 11:30–14:30, 18:00–22:00 · 일 휴무", d:"북쪽 출구 도보 7분. 점심엔 우동, 저녁엔 우동 이자카야. 스다치 쇼유 우동, 유자후추 닭튀김 붓카케가 인기예요. 저녁 예약 가능." },
-    { a:"mitaka", id:"13285898", n:"게이닌", sc:"3.66", g:"라멘 · 1,000엔 미만", m:"LD", sun:false, ll:[35.70593,139.56008],
-      h:"월–토 11:00–15:00, 18:00–21:00 · 일 휴무", d:"북쪽 출구 쪽 라멘집이라 점심에 회사에서 걸어가기 좋아요." },
-    { a:"mitaka", id:"13313947", n:"멘야 사쿠라이", ja:"麺屋 さくら井", sc:"3.70", g:"라멘 · 1,000~2,000엔", m:"LD", sun:true, ll:[35.70835,139.55614],
-      h:"점심 매일(수 휴무), 저녁은 월·토만 18:00–20:30", d:"화학조미료를 쓰지 않는 시오·쇼유 라멘. 아지타마 시오라멘이 1,400엔이에요. 예약 불가." },
-    { a:"mitaka", id:"13022196", n:"라멘 분조", ja:"らーめん 文蔵", sc:"3.66", g:"라멘 · 츠케멘 · 아부라소바", m:"L", sun:false, ll:[35.70085,139.56217],
-      h:"월–토 11:00–14:30 · 일·공휴일 휴무", d:"어패류 돈코츠 국물. 점심 전용이에요." },
-    { a:"mitaka", id:"13283562", n:"야키니쿠 후타미", ja:"焼肉ふたみ", sc:"3.62", g:"야키니쿠 · 1인 1만~1.5만 엔", m:"LD", sun:true, ll:[35.70394,139.56254], rsv:true,
-      h:"12:00–23:00(마지막 입장 21:00) · 부정기 휴무", d:"A5 흑모와규 7부위 모둠, 등심 스키야키, 사케 샤부샤부. 예약제이고 전날까지 예약해야 해요. 접대나 특별한 저녁에." },
-    { a:"mitaka", id:"13249011", n:"미타카 라멘 사카바 SAL", sc:"3.51", g:"라멘 · 이자카야 · 사케", m:"D", sun:false, ll:[35.70319,139.56199],
-      h:"월·화·목–토 17:00–24:00 · 수·일 휴무", d:"역에서 1분. 안주와 술을 마시다 라멘으로 마무리하는 가게예요. 자릿세 300엔." },
-    { a:"mitaka", id:"13119076", n:"히나도리 후지노", sc:"3.47", g:"야키토리 · 이자카야", m:"D", sun:true, ll:[35.70343,139.56190],
-      h:"매일 17:00–24:00(일·공휴일 ~23:00)", d:"북쪽 출구 3분. 야마모토 예약이 안 될 때 쓰기 좋은 숯불 야키토리집이고 일요일에도 열어요." },
-    { a:"mitaka", id:"13034285", n:"바사라", ja:"婆娑羅", sc:"3.47", g:"이자카야 · 해산물 · 소주", m:"D", sun:false, ll:[35.70380,139.55909],
-      h:"월–토 17:00–22:00 · 일·공휴일 휴무", d:"시메사바(초절임 고등어)로 유명한 이자카야예요." },
-    { a:"mitaka", id:"13123751", n:"사사요시", sc:"3.50", g:"호르몬 구이 · 이자카야", m:"D", sun:false, ll:[35.69986,139.56048],
-      h:"화–토 18:00–22:00 · 월·일 휴무", d:"1인 3,000~4,000엔대로 즐기는 동네 호르몬집." },
-    { a:"mitaka", id:"13042282", n:"소바 슈코 다카하시", sc:"3.48", g:"소바 · 이자카야", m:"LD", sun:true, ll:[35.70173,139.55932],
+    { a:"mitaka", id:"13207054", k:"ramen", hl:"조개·닭 육수 시오라멘", n:"라멘 스코야카", ja:"ラーメン 健やか", sc:3.78, hm:"라멘 2025", m:"LD", sun:true, ll:[35.70376,139.56432],
+      h:"매일 11:00–15:00, 18:00–21:00", d:"회사에서 가장 가까운 상위권 라멘집. 국산 밀 자가제면 츠케멘도 대표 메뉴예요. 예약은 안 받아요." },
+    { a:"mitaka", id:"13187433", k:"drink", hl:"숙성 사케와 숯불 야키토리", n:"야키토리 야마모토", ja:"焼鳥 山もと", sc:3.77, hm:"야키토리 2025", m:"D", sun:false, rsv:true, ll:[35.70501,139.56268],
+      h:"월–토 18:00–23:00 · 일 휴무", d:"지하 카운터, 1인 6,000~8,000엔. 완전 예약제라 타베로그나 토레타로 온라인 예약해야 해요. 10년 숙성 준마이슈를 데워 내요." },
+    { a:"mitaka", id:"13291810", k:"western", hl:"새우튀김·게살 크림 고로케", n:"시치조", ja:"七條", sc:3.71, hm:"양식 2025", m:"LD", sun:true, ll:[35.70179,139.56234],
+      h:"월·목–일 11:30–14:00, 18:00–20:30 · 화·수 휴무", d:"미타카역 2분. 모둠 튀김 정식이 인기고, 저녁만 예약돼요." },
+    { a:"mitaka", id:"13109995", k:"ramen", hl:"옛날식 쇼유 완탄멘", n:"주카소바 미타카", ja:"中華そば みたか", sc:3.72, m:"LD", sun:true, ll:[35.70101,139.56122],
+      h:"화–일 11:00–14:00, 17:00–20:30 · 월, 첫째·셋째 일 휴무", d:"문 닫은 노포의 맛을 이은 가게. 차슈완탄멘이 단골 메뉴예요." },
+    { a:"mitaka", id:"13241092", k:"ramen", hl:"밤에만 여는 스태미나 소바", n:"원조 스태미나 만점 라멘 스즈키", ja:"元祖スタミナ満点らーめん すず鬼", sc:3.77, hm:"라멘 2025", m:"D", sun:false, ll:[35.69979,139.56126],
+      h:"월–목 18:00–24:00, 금·토 ~01:00 · 일 휴무", d:"야근하고 늦게 먹기 좋아요. 매운 버전과 츠케멘도 많이 시켜요." },
+    { a:"mitaka", id:"13215409", k:"ramen", hl:"진한 닭 육수 라멘 (점심만)", n:"도리코쿠 주카 스즈키", sc:3.75, hm:"라멘 2021", m:"L", sun:false, ll:[35.69979,139.56127],
+      h:"화–토 11:00–15:00 · 월·일 휴무", d:"스태미나 라멘 스즈키와 같은 건물에서 점심에만 열어요." },
+    { a:"mitaka", id:"13117283", k:"noodle", hl:"스다치 우동, 저녁엔 우동 이자카야", n:"우동 스탠드 고즈", ja:"ウドンスタンド 五頭", sc:3.63, hm:"우동 2024", m:"LD", sun:false, ll:[35.70734,139.56072],
+      h:"월–토 11:30–14:30, 18:00–22:00 · 일 휴무", d:"북쪽 출구 7분. 유자후추 닭튀김 붓카케도 인기예요. 저녁은 예약할 수 있어요." },
+    { a:"mitaka", id:"13285898", k:"ramen", hl:"회사 쪽 동네 라멘", n:"게이닌", sc:3.66, m:"LD", sun:false, ll:[35.70593,139.56008],
+      h:"월–토 11:00–15:00, 18:00–21:00 · 일 휴무", d:"북쪽 출구 쪽이라 점심에 걸어가기 좋아요." },
+    { a:"mitaka", id:"13313947", k:"ramen", hl:"무화학조미료 시오·쇼유 라멘", n:"멘야 사쿠라이", ja:"麺屋 さくら井", sc:3.70, m:"LD", sun:true, ll:[35.70835,139.55614],
+      h:"점심 매일(수 휴무), 저녁은 월·토 18:00–20:30", d:"아지타마 시오라멘 1,400엔. 예약 불가." },
+    { a:"mitaka", id:"13022196", k:"ramen", hl:"어패 돈코츠·아부라소바", n:"라멘 분조", ja:"らーめん 文蔵", sc:3.66, m:"L", sun:false, ll:[35.70085,139.56217],
+      h:"월–토 11:00–14:30 · 일·공휴일 휴무", d:"점심 전용이에요." },
+    { a:"mitaka", id:"13283562", k:"meat", hl:"A5 와규 야키니쿠·스키야키", n:"야키니쿠 후타미", ja:"焼肉ふたみ", sc:3.62, m:"LD", sun:true, rsv:true, ll:[35.70394,139.56254],
+      h:"12:00–23:00(마지막 입장 21:00) · 부정기 휴무", d:"1인 1만~1.5만 엔. 전날까지 예약해야 해요. 접대나 특별한 저녁에." },
+    { a:"mitaka", id:"13249011", k:"drink", hl:"안주에 한잔, 라멘으로 마무리", n:"미타카 라멘 사카바 SAL", sc:3.51, m:"D", sun:false, ll:[35.70319,139.56199],
+      h:"월·화·목–토 17:00–24:00 · 수·일 휴무", d:"역에서 1분. 자릿세 300엔." },
+    { a:"mitaka", id:"13119076", k:"drink", hl:"예약 없이 가는 숯불 야키토리", n:"히나도리 후지노", sc:3.47, m:"D", sun:true, ll:[35.70343,139.56190],
+      h:"매일 17:00–24:00(일·공휴일 ~23:00)", d:"북쪽 출구 3분. 야마모토 예약이 안 될 때 좋고, 일요일에도 열어요." },
+    { a:"mitaka", id:"13034285", k:"drink", hl:"시메사바가 유명한 이자카야", n:"바사라", ja:"婆娑羅", sc:3.47, m:"D", sun:false, ll:[35.70380,139.55909],
+      h:"월–토 17:00–22:00 · 일·공휴일 휴무", d:"초절임 고등어(시메사바)에 소주 한잔." },
+    { a:"mitaka", id:"13123751", k:"meat", hl:"동네 호르몬 구이", n:"사사요시", sc:3.50, m:"D", sun:false, ll:[35.69986,139.56048],
+      h:"화–토 18:00–22:00 · 월·일 휴무", d:"1인 3,000~4,000엔대." },
+    { a:"mitaka", id:"13042282", k:"noodle", hl:"소바에 사케 한잔", n:"소바 슈코 다카하시", sc:3.48, m:"LD", sun:true, ll:[35.70173,139.55932],
       h:"목–화 11:00–15:00, 17:00–21:30 · 수 휴무", d:"점심엔 소바, 저녁엔 소바 안주에 사케." },
-    { a:"mitaka", id:"13010039", n:"한식원 교라쿠테이", ja:"韓食苑 恭楽亭", sc:"3.47", g:"야키니쿠 · 한식 · 냉면", m:"D", sun:true, ll:[35.70414,139.56131],
+    { a:"mitaka", id:"13010039", k:"meat", hl:"한식·야키니쿠·냉면", n:"한식원 교라쿠테이", ja:"韓食苑 恭楽亭", sc:3.47, m:"D", sun:true, ll:[35.70414,139.56131],
       h:"수–월 17:00–24:00 · 화 휴무", d:"북쪽 출구 3분. 한국 음식이 그리울 때." },
-    { a:"mitaka", id:"13184048", n:"카오만가이 바잘", sc:"3.49", g:"태국 · 이자카야", m:"LD", sun:true, ll:[35.70393,139.55918],
-      h:"화–일 11:00–15:00, 17:00–22:00 · 월 휴무", d:"카오만가이(태국식 닭고기 덮밥)와 태국 술안주." },
+    { a:"mitaka", id:"13184048", k:"etc", hl:"카오만가이(태국식 닭밥)", n:"카오만가이 바잘", sc:3.49, m:"LD", sun:true, ll:[35.70393,139.55918],
+      h:"화–일 11:00–15:00, 17:00–22:00 · 월 휴무", d:"점심 한 그릇으로도, 저녁 태국 안주로도." },
 
-    { a:"kichi", id:"13005894", n:"이세야 총본점", ja:"いせや 総本店", sc:"3.49", g:"야키토리 · 선술집", m:"LD", sun:true, ll:[35.70253,139.57682],
-      h:"수–월 12:00–22:00 · 화 휴무", d:"기치조지를 대표하는 노포 야키토리집. 낮부터 연기 자욱한 꼬치에 맥주. 공원점은 월요일 휴무예요." },
-    { a:"kichi", id:"13005878", n:"이세야 공원점", ja:"いせや 公園店", sc:"3.49", g:"야키토리", m:"LD", sun:true, ll:[35.70066,139.57815],
-      h:"화–일 12:00–21:00 · 월 휴무", d:"이노카시라 공원 입구에 있어서 산책 전후로 들르기 좋아요." },
-    { a:"kichi", id:"13297928", n:"스시토 슈코 도미카와", sc:"3.64", g:"이자카야 · 스시 · 1인 1만~1.5만 엔", hm:"이자카야 2026", m:"D", sun:true, ll:[35.70254,139.57760], rsv:true,
-      h:"매일 2부제(평일 17:30, 20:00 / 주말 17:00, 19:30)", d:"스시와 해산물 안주를 내는 이자카야 백명점. 2부제라 예약하는 게 좋아요." },
-    { a:"kichi", id:"13229797", n:"중국채 윤롱", ja:"中國菜 雲蓉", sc:"3.74", g:"쓰촨 · 양고기 · 저녁 1만 엔 안팎", hm:"중식 2026", m:"LD", sun:true, ll:[35.70572,139.57749], rsv:true,
-      h:"월·화·목 저녁, 금–일 점심·저녁 · 수 휴무", d:"양갈비 찜, 양고기 만두 같은 양고기 요리가 강해요. 저녁은 예약 권장, 현금만 받아요." },
-    { a:"kichi", id:"13026447", n:"사토노야도", ja:"里の宿", sc:"3.71", g:"식당 · 해산물 정식", hm:"식당 2026", m:"LD", sun:false, ll:[35.70091,139.58239],
-      h:"월–토 11:30–14:30, 17:00–20:30 · 일 휴무", d:"생선구이와 회 정식이 좋은 식당 백명점이에요." },
-    { a:"kichi", id:"13005789", n:"마메조", ja:"まめ蔵", sc:"3.74", g:"카레 · 킷사텐", hm:"카레 2026", m:"LD", sun:true, ll:[35.70444,139.57589],
-      h:"평일 11:00–21:00, 주말 11:00–15:30, 17:00–21:00", d:"1978년 창업. 맵지 않고 진하게 끓인 스페셜 카레가 대표 메뉴예요." },
-    { a:"kichi", id:"13009943", n:"카레 식당 리틀 스파이스", sc:"3.72", g:"카레 · 인도 카레", hm:"카레 2026", m:"D", sun:true, ll:[35.70580,139.57742],
-      h:"평일 16:00–21:00, 주말 13:00–21:00", d:"평일엔 오후 4시부터 열어서 퇴근 후 카레로 딱이에요." },
-    { a:"kichi", id:"13317762", n:"야키니쿠 엔 기치조지 총본점", sc:"3.60", g:"야키니쿠 · 호르몬 · 1인 6,000~8,000엔", m:"D", sun:true, ll:[35.70386,139.57878],
-      h:"매일 17:00–22:30", d:"기치조지 야키니쿠 1위. 역에서 2분이고 매일 열어요." },
-    { a:"kichi", id:"13047814", n:"사사노하", sc:"3.58", g:"사케 바 · 이자카야", m:"D", sun:false, ll:[35.70385,139.57911],
-      h:"화–토 19:30–24:00 · 월·일 휴무", d:"2차로 사케 한잔하기 좋은 작은 가게." },
-    { a:"kichi", id:"13152220", n:"플랫 스탠드 모토", sc:"3.57", g:"선술집 · 사케", m:"LD", sun:true, ll:[35.70415,139.57984],
-      h:"매일 12:00–22:00", d:"서서 마시는 사케 바. 1인 2,000~3,000엔이라 가볍게 들르기 좋아요." },
-    { a:"kichi", id:"13024975", n:"텟찬", sc:"3.47", g:"야키토리 · 하모니카 요코초", m:"D", sun:true, ll:[35.70361,139.57925],
-      h:"평일 15:00–24:00, 주말 12:00–24:00", d:"하모니카 요코초 안쪽의 분위기 좋은 야키토리 이자카야." },
-    { a:"kichi", id:"13309093", n:"우초쿠", sc:"3.71", g:"츠케멘", m:"LD", sun:true, ll:[35.70483,139.57969],
-      h:"금–수 11:00–15:00, 18:00–21:00 · 목 휴무(월 부정기)", d:"기치조지 츠케멘 1위권. 휴무일은 공식 X에서 확인하래요." },
-    { a:"kichi", id:"13104794", n:"츠케멘 엔지 기치조지 총본점", sc:"3.65", g:"츠케멘", m:"LD", sun:true, ll:[35.70289,139.57956],
-      h:"평일 11:00–16:00, 17:30–22:00 · 주말 11:00–22:00", d:"역에서 40m, 연중무휴라 언제든 들를 수 있어요." },
-    { a:"kichi", id:"13246332", n:"히키니쿠토 코메", ja:"挽肉と米", sc:"3.67", g:"함바그", hm:"양식 2025", m:"LD", sun:true, ll:[35.70584,139.57780],
-      h:"목–화 11:00–15:00, 17:00–21:00 · 수 휴무", d:"숯불에 바로 구운 함바그를 밥과 먹는 인기 가게. 당일 정리권제이고 오전 9시부터 이름을 적어요." },
-    { a:"kichi", id:"13005791", n:"COFFEE HALL 쿠구츠소", ja:"くぐつ草", sc:"3.72", g:"킷사텐 · 카레", hm:"킷사텐 2026", m:"LD", sun:true, ll:[35.70420,139.57829],
-      h:"매일 10:00–22:00", d:"동굴 같은 지하 킷사텐. 카레와 커피로 주말 아침을 시작하기 좋아요." },
-    { a:"kichi", id:"13005817", n:"오자사", ja:"小ざさ", sc:"3.77", g:"화과자", hm:"화과자 2026", m:"L", sun:true, ll:[35.70399,139.57911],
-      h:"수–월 10:00–18:30 · 화 휴무", d:"하루 한정 양갱은 새벽부터 줄을 서야 해서 어렵지만 모나카는 바로 살 수 있어요. 선물용으로 좋아요." },
+    { a:"kichi", id:"13005894", k:"drink", hl:"노포 야키토리에 낮맥", n:"이세야 총본점", ja:"いせや 総本店", sc:3.49, m:"LD", sun:true, ll:[35.70253,139.57682],
+      h:"수–월 12:00–22:00 · 화 휴무", d:"기치조지를 대표하는 노포. 낮부터 연기 자욱한 꼬치에 맥주." },
+    { a:"kichi", id:"13005878", k:"drink", hl:"공원 입구 야키토리", n:"이세야 공원점", ja:"いせや 公園店", sc:3.49, m:"LD", sun:true, ll:[35.70066,139.57815],
+      h:"화–일 12:00–21:00 · 월 휴무", d:"이노카시라 공원 산책 전후로 들르기 좋아요." },
+    { a:"kichi", id:"13297928", k:"drink", hl:"스시와 해산물 안주 이자카야", n:"스시토 슈코 도미카와", sc:3.64, hm:"이자카야 2026", m:"D", sun:true, rsv:true, ll:[35.70254,139.57760],
+      h:"매일 2부제(평일 17:30·20:00 / 주말 17:00·19:30)", d:"1인 1만~1.5만 엔. 2부제라 예약하는 게 좋아요." },
+    { a:"kichi", id:"13229797", k:"etc", hl:"양고기 쓰촨 요리", n:"중국채 윤롱", ja:"中國菜 雲蓉", sc:3.74, hm:"중식 2026", m:"LD", sun:true, rsv:true, ll:[35.70572,139.57749],
+      h:"월·화·목 저녁, 금–일 점심·저녁 · 수 휴무", d:"양갈비 찜, 양고기 만두가 강해요. 저녁은 예약 권장, 현금만 받아요." },
+    { a:"kichi", id:"13026447", k:"etc", hl:"생선구이·회 정식", n:"사토노야도", ja:"里の宿", sc:3.71, hm:"식당 2026", m:"LD", sun:false, ll:[35.70091,139.58239],
+      h:"월–토 11:30–14:30, 17:00–20:30 · 일 휴무", d:"식당 백명점. 해산물 정식이 좋아요." },
+    { a:"kichi", id:"13005789", k:"western", hl:"1978년부터 끓인 스페셜 카레", n:"마메조", ja:"まめ蔵", sc:3.74, hm:"카레 2026", m:"LD", sun:true, ll:[35.70444,139.57589],
+      h:"평일 11:00–21:00, 주말 11:00–15:30, 17:00–21:00", d:"맵지 않고 진하게 끓인 카레." },
+    { a:"kichi", id:"13009943", k:"western", hl:"평일 오후 4시부터 여는 카레", n:"카레 식당 리틀 스파이스", sc:3.72, hm:"카레 2026", m:"D", sun:true, ll:[35.70580,139.57742],
+      h:"평일 16:00–21:00, 주말 13:00–21:00", d:"퇴근 후 카레로 딱이에요." },
+    { a:"kichi", id:"13317762", k:"meat", hl:"기치조지 야키니쿠 1위", n:"야키니쿠 엔 기치조지 총본점", sc:3.60, m:"D", sun:true, ll:[35.70386,139.57878],
+      h:"매일 17:00–22:30", d:"역에서 2분, 1인 6,000~8,000엔. 매일 열어요." },
+    { a:"kichi", id:"13047814", k:"drink", hl:"2차로 가는 작은 사케 바", n:"사사노하", sc:3.58, m:"D", sun:false, ll:[35.70385,139.57911],
+      h:"화–토 19:30–24:00 · 월·일 휴무", d:"조용히 사케 한잔." },
+    { a:"kichi", id:"13152220", k:"drink", hl:"서서 마시는 사케 바", n:"플랫 스탠드 모토", sc:3.57, m:"LD", sun:true, ll:[35.70415,139.57984],
+      h:"매일 12:00–22:00", d:"1인 2,000~3,000엔이라 가볍게 들르기 좋아요." },
+    { a:"kichi", id:"13024975", k:"drink", hl:"하모니카 요코초 골목 야키토리", n:"텟찬", sc:3.47, m:"D", sun:true, ll:[35.70361,139.57925],
+      h:"평일 15:00–24:00, 주말 12:00–24:00", d:"골목 안쪽 분위기 좋은 이자카야." },
+    { a:"kichi", id:"13309093", k:"ramen", hl:"기치조지 1위권 츠케멘", n:"우초쿠", sc:3.71, m:"LD", sun:true, ll:[35.70483,139.57969],
+      h:"금–수 11:00–15:00, 18:00–21:00 · 목 휴무(월 부정기)", d:"휴무일은 공식 X에서 확인하래요." },
+    { a:"kichi", id:"13104794", k:"ramen", hl:"역 앞 츠케멘, 연중무휴", n:"츠케멘 엔지 기치조지 총본점", sc:3.65, m:"LD", sun:true, ll:[35.70289,139.57956],
+      h:"평일 11:00–16:00, 17:30–22:00 · 주말 11:00–22:00", d:"역에서 40m." },
+    { a:"kichi", id:"13246332", k:"western", hl:"숯불 함바그 정식", n:"히키니쿠토 코메", ja:"挽肉と米", sc:3.67, hm:"양식 2025", m:"LD", sun:true, ll:[35.70584,139.57780],
+      h:"목–화 11:00–15:00, 17:00–21:00 · 수 휴무", d:"당일 정리권제. 오전 9시부터 이름을 적어요." },
+    { a:"kichi", id:"13005791", k:"western", hl:"동굴 같은 킷사텐의 카레·커피", n:"COFFEE HALL 쿠구츠소", ja:"くぐつ草", sc:3.72, hm:"킷사텐 2026", m:"LD", sun:true, ll:[35.70420,139.57829],
+      h:"매일 10:00–22:00", d:"주말 아침을 시작하기 좋아요." },
+    { a:"kichi", id:"13005817", k:"sweet", hl:"모나카·양갱 (선물용)", n:"오자사", ja:"小ざさ", sc:3.77, hm:"화과자 2026", m:"L", sun:true, ll:[35.70399,139.57911],
+      h:"수–월 10:00–18:30 · 화 휴무", d:"한정 양갱은 새벽 줄이 필요하지만 모나카는 바로 살 수 있어요." },
 
-    { a:"sakai", id:"13005922", n:"친친테이", ja:"珍々亭", sc:"3.70", g:"아부라소바 원조", m:"L", sun:false, ll:[35.70332,139.53466],
-      h:"월–토 11:00–16:00 · 일·공휴일 휴무", d:"아부라소바를 처음 만든 가게로 알려졌어요. 보통 950엔. 차슈 기름, 파, 날달걀을 추가하는 게 단골식이에요." },
-    { a:"sakai", id:"13177636", n:"도쿄 미소 라멘 우즈라", ja:"東京味噌らーめん 鶉", sc:"3.74", g:"미소 라멘", m:"L", sun:false, ll:[35.70575,139.54391],
-      h:"평일 11:00–15:00, 토 11:00–16:00 · 일 휴무", d:"무사시사카이 1위. 토요일 점심에 가기 좋아요." },
-    { a:"sakai", id:"13229437", n:"숯불 야키토리 유 무사시사카이 본점", sc:"3.47", g:"야키토리 · 모츠나베", m:"LD", sun:true, ll:[35.70166,139.54205],
-      h:"매일 12:00–23:00(금·토 ~24:00)", d:"낮부터 열고 일요일에도 영업해요." },
-    { a:"sakai", id:"13009996", n:"하오하오", ja:"好好", sc:"3.47", g:"쓰촨 · 중식", m:"LD", sun:true, ll:[35.70180,139.54234],
+    { a:"sakai", id:"13005922", k:"ramen", hl:"아부라소바 원조집", n:"친친테이", ja:"珍々亭", sc:3.70, m:"L", sun:false, ll:[35.70332,139.53466],
+      h:"월–토 11:00–16:00 · 일·공휴일 휴무", d:"보통 950엔. 차슈 기름, 파, 날달걀 추가가 단골식이에요." },
+    { a:"sakai", id:"13177636", k:"ramen", hl:"무사시사카이 1위 미소 라멘", n:"도쿄 미소 라멘 우즈라", ja:"東京味噌らーめん 鶉", sc:3.74, m:"L", sun:false, ll:[35.70575,139.54391],
+      h:"평일 11:00–15:00, 토 11:00–16:00 · 일 휴무", d:"토요일 점심에 가기 좋아요." },
+    { a:"sakai", id:"13229437", k:"drink", hl:"낮부터 여는 야키토리", n:"숯불 야키토리 유", sc:3.47, m:"LD", sun:true, ll:[35.70166,139.54205],
+      h:"매일 12:00–23:00(금·토 ~24:00)", d:"일요일에도 영업해요." },
+    { a:"sakai", id:"13009996", k:"etc", hl:"동네 쓰촨 요리", n:"하오하오", ja:"好好", sc:3.47, m:"LD", sun:true, ll:[35.70180,139.54234],
       h:"수–월 12:00–13:30, 18:00–21:00 · 화 휴무", d:"동네 사람들이 다니는 쓰촨 요리집." }
   ];
 
-  var evening = [
-    { c:"var(--mitaka)", t:"회사에서 바로: 미타카 북쪽 출구", d:"야키토리 야마모토(예약 필수)나 우동 스탠드 고즈에서 한잔. 예약 없이 갈 땐 히나도리 후지노, 늦게 끝나면 스태미나 라멘 스즈키(새벽 1시까지)." },
-    { c:"var(--kichi)", t:"한 정거장: 기치조지 하모니카 요코초", d:"역 북쪽 출구 앞 좁은 골목 술집 거리예요. 텟찬에서 꼬치, 플랫 스탠드 모토에서 사케. 리틀 스파이스는 평일 오후 4시부터 열어 카레로 저녁을 먹어도 좋아요." },
-    { c:"var(--kichi)", t:"제대로 된 저녁: 기치조지 예약 가게", d:"스시토 슈코 도미카와(이자카야 백명점), 중국채 윤롱(쓰촨 백명점), 야키니쿠 엔. 미리 타베로그에서 예약하세요." },
-    { c:"var(--chuo)", t:"신주쿠까지 18분", d:"주오선 쾌속으로 신주쿠까지 금방이에요. 저장해둔 신주쿠 맛집(멘야무사시 본점, 츠나하치, 우나테츠 등)을 평일 저녁에 가도 돼요." }
-  ];
-
-  // Weekend spots. eats: [label, food id or google query]
   var spots = [
-    { n:"이노카시라 공원 · 지브리 미술관", when:"단풍 11월 하순~12월 초", ll:[35.6997,139.5735],
-      go:"기치조지역 남쪽 출구 도보 5분. 미술관은 공원 남쪽 끝, 미타카역에서도 걸어서 15분.",
-      d:"호수에서 보트를 타고 숲길을 따라 지브리 미술관까지 걸을 수 있어요. 미술관은 날짜 지정 예약제라 당일 입장이 안 돼요. 매월 10일 10:00에 로손 티켓에서 다음 달 표를 팔아요(12월분은 11월 10일 예상).",
-      links:[["지브리 미술관 티켓","https://l-tike.com/ghibli/"]],
-      eats:[["13005878","산책 전후 꼬치에 맥주"],["13005789","공원 북쪽 노포 카레"],["13005817","모나카 선물"]] },
-    { n:"하모니카 요코초 · 선로드", when:"아무 때나 · 저녁이 분위기 좋음", ll:[35.70375,139.57932],
-      go:"기치조지역 북쪽 출구 바로 앞.",
-      d:"전후 암시장에서 시작된 좁은 골목 상점가. 낮엔 붕어빵과 멘치카츠(사토), 밤엔 작은 술집들이 불을 켜요.",
-      links:[["사토 멘치카츠","吉祥寺 さとう メンチカツ"]],
-      eats:[["13024975","골목 안 야키토리"],["13152220","서서 마시는 사케"],["13317762","야키니쿠"]] },
-    { n:"진다이지(심대사) · 진다이 식물공원", when:"단풍 11월 중순~하순", ll:[35.66746,139.55028],
-      go:"미타카역이나 기치조지역에서 진다이지행 버스로 약 20~25분.",
-      d:"도쿄에서 두 번째로 오래된 절. 참배길에 소바집이 줄지어 있어서 진다이지 소바를 먹는 게 정석이에요. 바로 옆 식물공원은 장미원과 단풍이 좋아요(월요일 휴원).",
-      links:[["진다이 식물공원","神代植物公園"]],
-      eats:[["深大寺 そば","참배길 소바집들"],["深大寺 鬼太郎茶屋","게게게노 기타로 찻집"]] },
-    { n:"에도도쿄 다테모노엔", when:"월요일 휴관", ll:[35.71637,139.51274],
-      go:"주오선 무사시코가네이역에서 버스 약 5분, 고가네이 공원 안.",
-      d:"에도~쇼와 시대 건물을 옮겨 지은 야외 박물관. '센과 치히로' 거리의 모티브로 알려진 목욕탕과 상점 건물이 있어요. 고가네이 공원 단풍도 함께 보세요.",
-      links:[["공식 사이트","https://www.tatemonoen.jp/"]],
-      eats:[["13005922","돌아오는 길 무사시사카이에서 아부라소바(평일·토)"],["13177636","토요일 미소 라멘"]] },
-    { n:"쇼와기념공원(다치카와)", when:"축제 10/29~11/29 · 은행나무 11월 상순~하순", ll:[35.71226,139.39432],
-      go:"미타카에서 주오선 약 20분, 다치카와역이나 니시다치카와역.",
-      d:"도쿄 서부 최대 공원. '황엽·단풍 축제 & 가을 밤 산책 2026' 기간에는 은행나무 길과 일본 정원을 16:30~20:30에 라이트업해요. 개원 9:30~21:00, 어른 450엔.",
-      links:[["공식 사이트","https://www.showakinen-koen.jp/"]],
-      eats:[["立川 グランデュオ レストラン","다치카와역 쇼핑몰 식당가"]] },
-    { n:"다카오산", when:"모미지 마츠리 10/24~12/13 · 단풍 11월 중순~12월 초", ll:[35.63229,139.26998],
-      go:"주오선으로 다카오역, 게이오선 한 정거장 다카오산구치역. 약 50분.",
-      d:"케이블카로 중턱까지 오르고 1시간이면 정상. 케이블카 주변과 야쿠오인 경내가 단풍 중심이에요. 주말엔 붐비니 아침 일찍 출발하세요.",
-      links:[["다카오산 케이블카","高尾登山電鉄"]],
-      eats:[["高尾山 とろろそば","명물 마 소바(도로로 소바)"]] },
-    { n:"나카노 브로드웨이 · 고엔지", when:"주말 오후", ll:[35.70924,139.66569],
-      go:"주오선 쾌속으로 나카노 약 10분, 고엔지는 한 정거장 더.",
-      d:"나카노 브로드웨이는 피규어·레트로 굿즈 성지, 고엔지는 구제 옷가게와 작은 술집 골목이에요. 주말엔 쾌속이 고엔지를 지나치니 각역정차를 타세요.",
-      links:[["고엔지","高円寺駅"]],
-      eats:[["中野 青葉 本店","나카노 아오바 츠케멘"],["高円寺 大将","고엔지 야키토리 다이쇼"]] },
-    { n:"시모키타자와", when:"주말 오후", ll:[35.66130,139.66800],
-      go:"기치조지에서 게이오 이노카시라선 급행으로 약 15분.",
-      d:"구제 옷, 레코드, 카페 골목. 선로 위를 공원으로 만든 시모키타 선로 거리도 걸어보세요. 그대로 이노카시라선을 타면 시부야(저장 맛집 많음)까지 이어져요.",
-      links:[["시모키타 선로 거리","下北線路街"]],
-      eats:[["下北沢 カレー","시모키타 수프카레·카레 가게들"]] }
+    { e:"🍁", n:"이노카시라 공원 · 지브리 미술관", ll:[35.6997,139.5735],
+      f:["🚃 기치조지 도보 5분","🍁 11월 하순~12월 초","🎫 미술관 예약제"],
+      d:"호수 보트를 타고 숲길 따라 미술관까지 걸어요. 미술관 표는 매월 10일 10:00에 다음 달분이 풀려요(12월분은 11/10 예상).",
+      links:[["지브리 티켓","https://l-tike.com/ghibli/"]], eats:["13005878","13005789","13005817"] },
+    { e:"🏮", n:"하모니카 요코초 · 선로드", ll:[35.70375,139.57932],
+      f:["🚃 기치조지 북쪽 출구 앞","🌙 저녁이 분위기 좋음"],
+      d:"전후 암시장에서 시작된 골목 상점가. 낮엔 붕어빵과 멘치카츠, 밤엔 작은 술집들이 불을 켜요.",
+      links:[["사토 멘치카츠","吉祥寺 さとう メンチカツ"]], eats:["13024975","13152220","13317762"] },
+    { e:"⛩️", n:"진다이지 · 진다이 식물공원", ll:[35.66746,139.55028],
+      f:["🚌 미타카역 버스 20~25분","🍁 11월 중순~하순"],
+      d:"도쿄에서 손꼽히게 오래된 절. 참배길 소바집에서 진다이지 소바를 먹는 게 정석이에요. 식물공원은 월요일 휴원.",
+      links:[["진다이 식물공원","神代植物公園"]], eatq:[["深大寺 そば","🥢 참배길 소바"],["深大寺 鬼太郎茶屋","☕ 기타로 찻집"]] },
+    { e:"🏘️", n:"에도도쿄 다테모노엔", ll:[35.71637,139.51274],
+      f:["🚃 무사시코가네이 + 버스 5분","🚫 월요일 휴관"],
+      d:"에도~쇼와 건물을 옮겨 지은 야외 박물관. '센과 치히로' 거리의 모티브로 알려진 목욕탕과 상점이 있어요.",
+      links:[["공식 사이트","https://www.tatemonoen.jp/"]], eats:["13005922","13177636"] },
+    { e:"🌳", n:"쇼와기념공원 (다치카와)", ll:[35.71226,139.39432],
+      f:["🚃 주오선 20분","💛 은행나무 11월 상순~하순","💴 450엔"],
+      d:"축제 기간(10/29~11/29)에는 은행나무 길과 일본 정원을 16:30~20:30 라이트업해요. 개원 9:30~21:00.",
+      links:[["공식 사이트","https://www.showakinen-koen.jp/"]], eatq:[["立川 グランデュオ レストラン","🍽️ 다치카와역 식당가"]] },
+    { e:"⛰️", n:"다카오산", ll:[35.63229,139.26998],
+      f:["🚃 약 50분","🍁 11월 중순~12월 초","🚡 케이블카"],
+      d:"케이블카로 중턱까지, 1시간이면 정상. 모미지 마츠리(10/24~12/13) 기간엔 주말에 붐비니 아침 일찍 출발하세요.",
+      links:[["케이블카","高尾登山電鉄"]], eatq:[["高尾山 とろろそば","🥢 명물 도로로 소바"]] },
+    { e:"🧸", n:"나카노 브로드웨이 · 고엔지", ll:[35.70924,139.66569],
+      f:["🚃 주오선 10분","🛍️ 피규어·구제"],
+      d:"나카노는 피규어·레트로 굿즈 성지, 고엔지는 구제 옷과 골목 술집. 주말엔 쾌속이 고엔지를 지나치니 각역정차를 타세요.",
+      links:[["고엔지역","高円寺駅"]], eatq:[["中野 青葉 本店","🍜 나카노 아오바"],["高円寺 大将","🍢 고엔지 다이쇼"]] },
+    { e:"🎸", n:"시모키타자와", ll:[35.66130,139.66800],
+      f:["🚃 기치조지에서 급행 15분","☕ 카페·레코드"],
+      d:"구제 옷, 레코드, 카페 골목. 이노카시라선을 그대로 타면 시부야(저장 맛집 많음)까지 이어져요.",
+      links:[["시모키타 선로 거리","下北線路街"]], eatq:[["下北沢 カレー","🍛 시모키타 카레"]] }
   ];
 
-  // Saved Google Maps lists, regrouped by real location. [name, lat, lng, cid]
+  // Picks per situation: f = food id, s = spot index.
+  var NOW = {
+    lunch:{ tab:"점심", title:"오늘 점심 어디 갈까", lead:"회사에서 걸어서 갈 수 있는 상위권 가게예요.",
+      picks:[{f:"13207054",why:"회사에서 제일 가까운 라멘 백명점"},{f:"13291810",why:"라멘이 질리면 튀김 정식"},{f:"13117283",why:"가볍게 우동 한 그릇"}],
+      tip:"<b>라멘은 11시 오픈 직후</b>가 줄이 짧아요. 점심에만 여는 곳(분조, 도리코쿠 스즈키)도 있어요." },
+    evening:{ tab:"퇴근 후", title:"퇴근하고 한잔", lead:"미타카 북쪽 출구와 한 정거장 기치조지에서 골랐어요.",
+      picks:[{f:"13187433",why:"제대로 된 저녁, 예약하고 가기"},{f:"13119076",why:"예약 없이 바로, 일요일도 영업"},{f:"13024975",why:"기치조지 골목 술집 분위기"}],
+      tip:"<b>늦게 끝난 날</b>은 스태미나 라멘 스즈키(새벽 1시까지). <b>신주쿠까지 18분</b>이라 저장해둔 신주쿠 맛집도 평일 저녁에 갈 만해요." },
+    weekend:{ tab:"주말", title:"이번 주말엔", lead:"11월은 단풍 시즌이에요. 미타카에서 가까운 순으로 골랐어요.",
+      picks:[{s:0,why:"가장 가깝고, 공원 산책에 지브리까지"},{s:4,why:"노란 은행나무 길과 밤 라이트업"},{s:5,why:"제대로 단풍을 보고 싶다면"}],
+      tip:"<b>일요일엔 쉬는 가게가 많아요.</b> 맛집 목록에서 '일요일 영업'을 켜고 고르세요." }
+  };
+
+  // Saved Google Maps lists, regrouped by location. [name, lat, lng, cid, genre]
   var saved = [
-    { area:"신주쿠", tm:"주오선 쾌속 약 18분", items:[
-      ["멘야무사시 본점",35.69557,139.69865,"8971049026698303002"],["우나테츠",35.69469,139.70265,"5633907992513733562"],["Yakiniku Motoyama",35.69428,139.69824,"12609536037215842473"],
-      ["하카타텐진 신주쿠히가시구치점",35.68983,139.70742,"10198229450247665748"],["돈까츠 와코 타쿠미안 이세탄 신주쿠점",35.69132,139.70433,"15132838891608701601"],["교자노 후쿠호우 신주쿠점",35.68916,139.70889,"15912583242526311410"],
-      ["코메라쿠",35.69111,139.70098,"3864716934390265776"],["테판 베이비",35.69405,139.70124,"5576426787614804085"],["우동 신",35.68649,139.697,"5413784674946717542"],
-      ["신주쿠 갓포 나카지마",35.6902,139.704,"12332507620821246132"],["타츠키치 신주쿠본점",35.69125,139.70526,"3212438369977374144"],["신주쿠 츠나하치 총본점",35.69085,139.70339,"5607782394818890547"],
-      ["스시에비스 신주쿠 니시구치",35.69397,139.69806,"1312784226142710313"],["야키니쿠 돈돈 가부키초점",35.69425,139.70105,"8311481824911324084"],
-      ["도큐 가부키초 타워 (명소)",35.69575,139.70059,"15311689853793820329"],["돈키호테 가부키초점 (쇼핑)",35.69378,139.70179,"9620539070280116520"] ]},
-    { area:"시부야 · 하라주쿠", tm:"기치조지에서 이노카시라선 급행 약 17분", items:[
-      ["라멘 하야시",35.65733,139.69798,"3119234820285983049"],["아후리 (에비스)",35.6483,139.71088,"13480834823894184664"],["아후리 하라주쿠점",35.67301,139.7038,"14658399961265590294"],
-      ["요로니쿠",35.66025,139.71757,"17504455164455004442"],["시부야교자 시부야본점",35.66073,139.69807,"7800037586990586355"],["오모테산도 우카이테이",35.66739,139.70679,"6488589390633478948"],
-      ["아부라 소바 시부야구미",35.65698,139.704,"11761139491629214624"],["야마모토노 함바그 시부야점",35.65758,139.70482,"12761651627546376733"],["오니소바 후지야",35.66022,139.69938,"8045912811749530868"],
-      ["d47식당",35.6588,139.70315,"15944946628415994324"],["킨카 스시바 이자카야",35.66251,139.69874,"7383696917944578280"],["카츠동야 즈이초",35.6627,139.69536,"4739067769474410735"],
-      ["토리카츠 치킨 시부야",35.65887,139.69685,"2024953064980840691"],["츠케멘 야스베에 시부야점",35.65715,139.70382,"825628217371402358"],["규카츠 모토무라 시부야분점",35.65963,139.70413,"5974494739618672671"],
-      ["규카츠 모토무라 시부야점",35.65698,139.704,"8963800606739303068"],["토리타케 총본점",35.65806,139.699,"10806649970888955694"],
-      ["하쿠슈우 테판야키",35.65629,139.70099,"14129729639334726628"],["키라쿠",35.65905,139.69688,"11366478258754962838"] ]},
-    { area:"롯폰기 · 아자부 · 아카사카", tm:"신주쿠 경유 약 40분", items:[
-      ["킨카 스시바 이자카야 롯폰기",35.6647,139.72809,"6330686768006921453"],["파티스리 사다하루 아오키 파리",35.66598,139.73053,"10630892310385371861"],["사라시나 호리이 아자부주반본점",35.65683,139.7329,"4799624521792605391"],
-      ["Bricolage bread & co.",35.65919,139.72824,"11341471369970278259"],["Nanaban",35.66185,139.72546,"5378740592507063031"],["Hama Roppongi Honten Steak House",35.66654,139.72764,"6966043082966368901"],
-      ["죠몬 롯폰기점",35.66137,139.73303,"5986398684437807624"],["아후리 롯폰기힐즈",35.66149,139.72969,"17325263044060860038"],["곤파치 니시아자부",35.66017,139.72358,"1337614840498094983"],
-      ["부타구미 식당",35.66142,139.7294,"13673194007097591326"],["부타구미",35.66096,139.72214,"7603239805685047243"],["와라야키야 롯폰기",35.6615,139.73271,"2763884013432511146"],
-      ["츠루동탄 롯본기점",35.66499,139.72983,"6396722401939980052"],["미트맨",35.66389,139.73288,"8017507879430430985"],["이마카츠 롯폰기 본점",35.66445,139.73158,"13856104743538324123"],
-      ["야겐보리 아카사카점",35.67565,139.73632,"3913022261133044411"],["고다이메 노다이와 본점 (시바)",35.65812,139.74337,"12647547846201370726"] ]},
-    { area:"긴자 · 도쿄역", tm:"주오선 쾌속 도쿄역 약 35분", items:[
-      ["스미야키 우나후지 유라쿠초",35.67033,139.75902,"5664524024669213077"],["긴자 사토요스케",35.67145,139.76155,"12892562419540071658"],
-      ["츠지한",35.68072,139.77158,"2386807723085252126"],["카네코한노스케 본점",35.68538,139.77527,"2076606597046497200"] ]},
-    { area:"우에노 · 아사쿠사", tm:"신주쿠·도쿄역 경유 약 45분", items:[
-      ["멘야무사시 우에노점",35.7112,139.77491,"11837565647337168682"],["칸다야부 소바",35.69702,139.76872,"15294491058971948881"],["우사기야",35.70615,139.77182,"7673543629028063610"],
-      ["네즈 카마치쿠",35.71808,139.76696,"18134831631729746555"],["캇찬",35.71104,139.77502,"13066955790248187651"],["이센 본점",35.70747,139.77219,"7551412642962414623"],
-      ["인쇼테이",35.71389,139.77263,"9189510966263854478"],["이즈에이 우메가와테이",35.71489,139.77174,"12156716961988907616"],["라멘 카모토네기",35.70838,139.77526,"16545202979838677239"],
-      ["야키토리 우에노 분라쿠",35.71046,139.77493,"296275544413386857"],["호라이야",35.7074,139.77372,"4796882690944863596"],["폰타 혼케",35.70634,139.773,"13886566408511016844"],
-      ["돈카츠 야마베",35.70829,139.77545,"11052182566575589362"],["이즈에이",35.70967,139.77269,"13816667865528678733"],["니쿠노 오오야마",35.71039,139.77524,"15433152325773696353"],
-      ["나다이 우나토토 우에노점",35.71114,139.77487,"8904068187524217132"],["카마메시 하루 (아사쿠사)",35.71187,139.79379,"3467875015110617763"] ]}
+    { area:"신주쿠", e:"🌆", tm:"주오선 쾌속 약 18분", items:[
+      ["멘야무사시 본점",35.69557,139.69865,"8971049026698303002","라멘"],["우나테츠",35.69469,139.70265,"5633907992513733562","장어"],["Yakiniku Motoyama",35.69428,139.69824,"12609536037215842473","고기"],
+      ["하카타텐진 신주쿠히가시구치점",35.68983,139.70742,"10198229450247665748","라멘"],["돈까츠 와코 타쿠미안 이세탄점",35.69132,139.70433,"15132838891608701601","돈카츠"],["교자노 후쿠호우 신주쿠점",35.68916,139.70889,"15912583242526311410","교자"],
+      ["코메라쿠",35.69111,139.70098,"3864716934390265776","오차즈케"],["테판 베이비",35.69405,139.70124,"5576426787614804085","철판"],["우동 신",35.68649,139.697,"5413784674946717542","우동"],
+      ["신주쿠 갓포 나카지마",35.6902,139.704,"12332507620821246132","일식"],["타츠키치 신주쿠본점",35.69125,139.70526,"3212438369977374144","꼬치튀김"],["신주쿠 츠나하치 총본점",35.69085,139.70339,"5607782394818890547","텐푸라"],
+      ["스시에비스 신주쿠 니시구치",35.69397,139.69806,"1312784226142710313","스시"],["야키니쿠 돈돈 가부키초점",35.69425,139.70105,"8311481824911324084","고기"],
+      ["도큐 가부키초 타워",35.69575,139.70059,"15311689853793820329","명소"],["돈키호테 가부키초점",35.69378,139.70179,"9620539070280116520","쇼핑"] ]},
+    { area:"시부야 · 하라주쿠", e:"🛍️", tm:"기치조지에서 이노카시라선 급행 약 17분", items:[
+      ["라멘 하야시",35.65733,139.69798,"3119234820285983049","라멘"],["아후리 (에비스)",35.6483,139.71088,"13480834823894184664","라멘"],["아후리 하라주쿠점",35.67301,139.7038,"14658399961265590294","라멘"],
+      ["요로니쿠",35.66025,139.71757,"17504455164455004442","고기"],["시부야교자 본점",35.66073,139.69807,"7800037586990586355","교자"],["오모테산도 우카이테이",35.66739,139.70679,"6488589390633478948","철판"],
+      ["아부라 소바 시부야구미",35.65698,139.704,"11761139491629214624","라멘"],["야마모토노 함바그",35.65758,139.70482,"12761651627546376733","함바그"],["오니소바 후지야",35.66022,139.69938,"8045912811749530868","소바"],
+      ["d47식당",35.6588,139.70315,"15944946628415994324","정식"],["킨카 스시바 이자카야",35.66251,139.69874,"7383696917944578280","스시"],["카츠동야 즈이초",35.6627,139.69536,"4739067769474410735","돈카츠"],
+      ["토리카츠 치킨",35.65887,139.69685,"2024953064980840691","돈카츠"],["츠케멘 야스베에",35.65715,139.70382,"825628217371402358","라멘"],["규카츠 모토무라 분점",35.65963,139.70413,"5974494739618672671","규카츠"],
+      ["규카츠 모토무라",35.65698,139.704,"8963800606739303068","규카츠"],["토리타케 총본점",35.65806,139.699,"10806649970888955694","야키토리"],
+      ["하쿠슈우 테판야키",35.65629,139.70099,"14129729639334726628","철판"],["키라쿠",35.65905,139.69688,"11366478258754962838","라멘"] ]},
+    { area:"롯폰기 · 아자부 · 아카사카", e:"🗼", tm:"신주쿠 경유 약 40분", items:[
+      ["킨카 스시바 롯폰기",35.6647,139.72809,"6330686768006921453","스시"],["사다하루 아오키 파리",35.66598,139.73053,"10630892310385371861","디저트"],["사라시나 호리이 본점",35.65683,139.7329,"4799624521792605391","소바"],
+      ["Bricolage bread & co.",35.65919,139.72824,"11341471369970278259","빵"],["Nanaban",35.66185,139.72546,"5378740592507063031","식당"],["Hama 스테이크하우스",35.66654,139.72764,"6966043082966368901","고기"],
+      ["죠몬 롯폰기점",35.66137,139.73303,"5986398684437807624","꼬치"],["아후리 롯폰기힐즈",35.66149,139.72969,"17325263044060860038","라멘"],["곤파치 니시아자부",35.66017,139.72358,"1337614840498094983","이자카야"],
+      ["부타구미 식당",35.66142,139.7294,"13673194007097591326","돈카츠"],["부타구미",35.66096,139.72214,"7603239805685047243","돈카츠"],["와라야키야 롯폰기",35.6615,139.73271,"2763884013432511146","이자카야"],
+      ["츠루동탄 롯폰기점",35.66499,139.72983,"6396722401939980052","우동"],["미트맨",35.66389,139.73288,"8017507879430430985","고기"],["이마카츠 롯폰기 본점",35.66445,139.73158,"13856104743538324123","돈카츠"],
+      ["야겐보리 아카사카점",35.67565,139.73632,"3913022261133044411","일식"],["노다이와 본점 (시바)",35.65812,139.74337,"12647547846201370726","장어"] ]},
+    { area:"긴자 · 도쿄역", e:"🏙️", tm:"주오선 쾌속 도쿄역 약 35분", items:[
+      ["스미야키 우나후지 유라쿠초",35.67033,139.75902,"5664524024669213077","장어"],["긴자 사토요스케",35.67145,139.76155,"12892562419540071658","우동"],
+      ["츠지한",35.68072,139.77158,"2386807723085252126","카이센동"],["카네코한노스케 본점",35.68538,139.77527,"2076606597046497200","텐동"] ]},
+    { area:"우에노 · 아사쿠사", e:"🏮", tm:"신주쿠·도쿄역 경유 약 45분", items:[
+      ["멘야무사시 우에노점",35.7112,139.77491,"11837565647337168682","라멘"],["칸다야부 소바",35.69702,139.76872,"15294491058971948881","소바"],["우사기야",35.70615,139.77182,"7673543629028063610","디저트"],
+      ["네즈 카마치쿠",35.71808,139.76696,"18134831631729746555","우동"],["캇찬",35.71104,139.77502,"13066955790248187651","식당"],["이센 본점",35.70747,139.77219,"7551412642962414623","돈카츠"],
+      ["인쇼테이",35.71389,139.77263,"9189510966263854478","일식"],["이즈에이 우메가와테이",35.71489,139.77174,"12156716961988907616","장어"],["라멘 카모토네기",35.70838,139.77526,"16545202979838677239","라멘"],
+      ["야키토리 우에노 분라쿠",35.71046,139.77493,"296275544413386857","야키토리"],["호라이야",35.7074,139.77372,"4796882690944863596","돈카츠"],["폰타 혼케",35.70634,139.773,"13886566408511016844","돈카츠"],
+      ["돈카츠 야마베",35.70829,139.77545,"11052182566575589362","돈카츠"],["이즈에이",35.70967,139.77269,"13816667865528678733","장어"],["니쿠노 오오야마",35.71039,139.77524,"15433152325773696353","고기"],
+      ["나다이 우나토토 우에노점",35.71114,139.77487,"8904068187524217132","장어"],["카마메시 하루 (아사쿠사)",35.71187,139.79379,"3467875015110617763","솥밥"] ]}
   ];
+  var SAVED_E = { "라멘":"🍜","장어":"🐟","고기":"🥩","돈카츠":"🍖","규카츠":"🍖","교자":"🥟","오차즈케":"🍚","솥밥":"🍚","철판":"🔥","우동":"🥢","소바":"🥢","일식":"🍱","정식":"🍱","식당":"🍽️","꼬치튀김":"🍢","꼬치":"🍢","야키토리":"🍢","이자카야":"🍶","텐푸라":"🍤","텐동":"🍤","스시":"🍣","카이센동":"🍣","함바그":"🍔","디저트":"🍰","빵":"🥐","명소":"📍","쇼핑":"🛍️" };
 
   var tips = [
-    { c:"var(--chuo)", t:"주오선 특쾌는 기치조지에 안 서요", d:"미타카에는 쾌속·특쾌가 다 서지만 기치조지는 특쾌가 지나쳐요. 기치조지로 갈 땐 쾌속이나 노란색 소부선 각역정차를 타세요. 주말엔 쾌속이 고엔지·아사가야·니시오기쿠보를 지나쳐요." },
-    { c:"var(--crit)", t:"일요일에 쉬는 가게가 많아요", d:"야마모토, 스즈키, 고즈, 친친테이, 우즈라 등 상위권 가게 상당수가 일요일 휴무예요. 위 맛집 목록의 \"일요일 영업\" 필터를 쓰세요." },
-    { c:"var(--warn)", t:"예약은 타베로그 온라인으로", d:"요즘은 전화를 안 받고 온라인 예약만 받는 가게가 많아요. 타베로그 한국어판에서 빈자리를 보고 바로 예약할 수 있어요." },
-    { c:"var(--ok)", t:"라멘집은 일찍", d:"점심 라멘은 11시 오픈 직후가 줄이 짧아요. 국물이 떨어지면 영업시간 전이라도 닫아요." },
-    { c:"var(--spot)", t:"지브리 미술관은 미리", d:"매월 10일 10:00에 다음 달 표가 풀리고 인기 날짜는 금방 매진돼요. 공식 판매처(로손 티켓) 말고 리셀 사이트는 입장이 안 될 수 있어요." },
-    { c:"var(--kichi)", t:"현금 챙기기", d:"중국채 윤롱처럼 현금만 받는 가게가 아직 있어요. 편의점 ATM에서 해외 카드로 뽑을 수 있어요." }
+    { e:"🚃", t:"특쾌는 기치조지에 안 서요", d:"미타카엔 쾌속·특쾌가 다 서지만 기치조지는 특쾌가 지나쳐요. 주말엔 쾌속이 고엔지·아사가야·니시오기쿠보를 지나쳐요." },
+    { e:"📅", t:"일요일에 쉬는 가게가 많아요", d:"야마모토, 스즈키, 고즈, 친친테이, 우즈라 등 상위권 상당수가 일요일 휴무예요." },
+    { e:"📱", t:"예약은 타베로그 온라인으로", d:"전화를 안 받고 온라인 예약만 받는 가게가 많아요. 타베로그 한국어판에서 바로 예약돼요." },
+    { e:"⏰", t:"라멘집은 일찍", d:"국물이 떨어지면 영업시간 전이라도 닫아요. 오픈 직후가 줄도 짧아요." },
+    { e:"🎫", t:"지브리 미술관은 미리", d:"매월 10일 10:00에 다음 달 표가 풀리고 금방 매진돼요. 리셀 표는 입장이 안 될 수 있어요." },
+    { e:"💴", t:"현금 챙기기", d:"윤롱처럼 현금만 받는 가게가 아직 있어요. 편의점 ATM에서 해외 카드로 뽑을 수 있어요." }
   ];
 
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
@@ -472,9 +531,14 @@ footer{margin-top:32px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
   var foodById = {};
   food.forEach(function(f){ f.url = TABE(AREAS[f.a].code, f.id); f.walk = walkMin(f.ll); foodById[f.id] = f; });
 
+  function star(sc){ return '<span class="star'+(sc>=3.7?' top':'')+'">★ '+sc.toFixed(2)+'</span>'; }
+  function where(f){ return f.a==="mitaka" ? '<span class="walk">회사에서 도보 '+f.walk+'분</span>' : '<span class="walk">'+AREAS[f.a].lbl+' · 한 정거장</span>'; }
+  function badges(f){ return (f.hm?'<span class="badge top">백명점</span>':'')+(f.rsv?'<span class="badge rsv">예약</span>':''); }
+  function linkBtn(label, url, pri){ return '<a class="btn'+(pri?' pri':'')+'" href="'+esc(url)+'" target="_blank" rel="noopener">'+ICON_OUT+esc(label)+'</a>'; }
+
   // nav
   var nav = document.getElementById("nav");
-  var navItems = [["mapsec","지도"],["food","맛집"],["evening","퇴근 후"],["weekend","주말"],["saved","저장 맛집"],["tips","팁"]];
+  var navItems = [["now","지금 갈 곳"],["explore","맛집 지도"],["weekend","주말"],["saved","저장 맛집"],["tips","팁"]];
   nav.innerHTML = navItems.map(function(n){ return '<a class="chip" href="#'+n[0]+'" data-t="'+n[0]+'">'+esc(n[1])+'</a>'; }).join("");
   var chipEls = nav.querySelectorAll(".chip");
   function setActive(id){
@@ -485,169 +549,253 @@ footer{margin-top:32px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
     });
   }
 
-  // food
-  var FILTERS = [["all","전체"],["L","점심"],["D","저녁"],["sun","일요일 영업"],["hm","백명점"],["near","회사 도보 10분"]];
-  var foodFilter = document.getElementById("foodFilter");
-  var foodList = document.getElementById("foodList");
-  foodFilter.innerHTML = FILTERS.map(function(f){ return '<button class="chip" type="button" data-f="'+f[0]+'" aria-pressed="false">'+esc(f[1])+'</button>'; }).join("");
-  function card(f){
-    var A = AREAS[f.a];
-    var tags = [];
-    if(f.hm) tags.push('<span class="tag gold">백명점 '+esc(f.hm)+'</span>');
-    if(f.rsv) tags.push('<span class="tag crit">예약 권장</span>');
-    if(!f.sun) tags.push('<span class="tag warn">일요일 휴무</span>');
-    var walk = f.a==="mitaka" ? '<span class="walk">회사에서 도보 약 '+f.walk+'분</span>' : '<span class="walk">'+esc(A.short)+'</span>';
-    return '<article class="card rst" style="--c:'+A.c+'">'
-      + '<div class="top"><div class="l"><div class="nm">'+esc(f.n)+(f.ja?'<span class="ja">'+esc(f.ja)+'</span>':'')+'</div><div class="gn">'+esc(f.g)+'</div></div>'
-      + '<div class="sc">'+esc(f.sc)+'<small>타베로그</small></div></div>'
-      + '<div class="tags">'+walk+tags.join("")+'</div>'
-      + '<p>'+esc(f.d)+'</p>'
-      + '<div class="hr"><b>영업</b> '+esc(f.h)+'</div>'
-      + '<div class="acts"><button class="btn pinbtn" type="button" data-pin="'+f.id+'">'+ICON_MAP+'지도</button>'
-      + '<a class="btn" href="'+esc(GMAP(f.ll.join(",")))+'" target="_blank" rel="noopener">'+ICON_OUT+'구글 지도</a>'
-      + '<a class="btn" href="'+esc(f.url)+'" target="_blank" rel="noopener">'+ICON_OUT+'타베로그</a></div>'
-      + '</article>';
+  // now: pick tab by Tokyo time (weekday 15:00+ → evening, weekend → weekend, else lunch)
+  function defaultNow(){
+    var t = new Date(Date.now() + 9*3600*1000);
+    var day = t.getUTCDay(), hr = t.getUTCHours();
+    if(day===0 || day===6) return "weekend";
+    if(day===5 && hr>=15) return "evening";
+    return hr>=15 || hr<4 ? "evening" : "lunch";
   }
-  var curFood = "all";
-  function renderFood(key){
-    curFood = key;
-    foodFilter.querySelectorAll(".chip").forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-f")===key ? "true" : "false"); });
-    var ok = function(f){
-      if(key==="L"||key==="D") return f.m.indexOf(key) >= 0;
-      if(key==="sun") return f.sun;
-      if(key==="hm") return !!f.hm;
-      if(key==="near") return f.walk <= 10;
-      return true;
-    };
-    foodList.innerHTML = Object.keys(AREAS).map(function(a){
-      var A = AREAS[a];
-      var list = food.filter(function(f){ return f.a===a && ok(f); });
-      if(!list.length) return "";
-      return '<h3 class="sub" style="--c:'+A.c+'"><i></i>'+esc(A.lbl)+'<span class="chip n" style="border:0;padding:0;background:none">'+list.length+'곳</span></h3><div class="grid">'+list.map(card).join("")+'</div>';
-    }).join("") || '<p class="empty">조건에 맞는 가게가 없어요.</p>';
+  var nowTabs = document.getElementById("nowTabs");
+  nowTabs.innerHTML = Object.keys(NOW).map(function(k){ return '<button type="button" role="tab" data-k="'+k+'" aria-selected="false">'+esc(NOW[k].tab)+'</button>'; }).join("");
+  function pickCard(p, i){
+    if(p.f){
+      var f = foodById[p.f], G = GENRES[f.k], A = AREAS[f.a];
+      return '<article class="pick" style="--c:'+A.c+'"><div class="art" aria-hidden="true"><span class="rank">PICK '+(i+1)+'</span>'+G.e+'</div><div class="bd">'
+        + '<h3 class="hl">'+esc(f.hl)+'</h3><div class="nm">'+esc(f.n)+(f.ja?' · '+esc(f.ja):'')+'</div>'
+        + '<div class="meta">'+where(f)+star(f.sc)+badges(f)+'</div>'
+        + '<p>'+esc(p.why)+'. '+esc(f.d)+'</p>'
+        + '<div class="acts">'+linkBtn("길찾기", GMAP(f.ll.join(",")), true)+linkBtn("타베로그", f.url)+'</div></div></article>';
+    }
+    var s = spots[p.s];
+    return '<article class="pick" style="--c:var(--spot)"><div class="art" aria-hidden="true"><span class="rank">PICK '+(i+1)+'</span>'+s.e+'</div><div class="bd">'
+      + '<h3 class="hl">'+esc(s.n)+'</h3><div class="nm">'+esc(p.why)+'</div>'
+      + '<div class="meta">'+s.f.slice(0,2).map(esc).join(' · ')+'</div>'
+      + '<p>'+esc(s.d)+'</p>'
+      + '<div class="acts">'+linkBtn("길찾기", GMAP(s.ll.join(",")), true)+'<a class="btn" href="#weekend">자세히</a></div></div></article>';
   }
-  foodFilter.addEventListener("click",function(e){ var b=e.target.closest("button[data-f]"); if(b) renderFood(b.getAttribute("data-f")); });
-  renderFood("all");
+  function renderNow(k){
+    var N = NOW[k];
+    nowTabs.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-k")===k ? "true" : "false"); });
+    document.getElementById("nowTitle").textContent = N.title;
+    document.getElementById("nowLead").textContent = N.lead;
+    document.getElementById("picks").innerHTML = N.picks.map(pickCard).join("");
+    document.getElementById("nowTip").innerHTML = N.tip;
+  }
+  nowTabs.addEventListener("click",function(e){ var b=e.target.closest("button[data-k]"); if(b) renderNow(b.getAttribute("data-k")); });
+  renderNow(defaultNow());
 
-  // evening + tips
-  function tipItems(list){ return list.map(function(t){ return '<li style="--c:'+t.c+'"><b>'+esc(t.t)+'</b><p>'+esc(t.d)+'</p></li>'; }).join(""); }
-  document.getElementById("eveningList").innerHTML = tipItems(evening);
-  document.getElementById("tipList").innerHTML = tipItems(tips);
+  // explore filters
+  var state = { g:"all", a:"all", sun:false };
+  var genreChips = document.getElementById("genreChips");
+  genreChips.innerHTML = '<button class="chip" type="button" data-g="all" aria-pressed="true">전체</button>'
+    + Object.keys(GENRES).filter(function(k){ return food.some(function(f){ return f.k===k; }); }).map(function(k){
+        return '<button class="chip" type="button" data-g="'+k+'" aria-pressed="false"><span class="e" aria-hidden="true">'+GENRES[k].e+'</span>'+esc(GENRES[k].lbl)+'</button>';
+      }).join("");
+  var areaSeg = document.getElementById("areaSeg");
+  areaSeg.innerHTML = [["all","전체 지역"]].concat(Object.keys(AREAS).map(function(k){ return [k, AREAS[k].lbl]; })).map(function(a,i){
+    return '<button type="button" data-a="'+a[0]+'" aria-pressed="'+(i===0)+'">'+esc(a[1])+'</button>';
+  }).join("") + '<label class="sun"><input type="checkbox" id="sunOnly">일요일 영업</label>';
 
-  // spots
-  document.getElementById("spotList").innerHTML = spots.map(function(s,i){
-    var eats = s.eats.map(function(e){
-      var f = foodById[e[0]];
-      return f ? '<li><a href="'+esc(f.url)+'" target="_blank" rel="noopener"><b>'+esc(f.n)+'</b></a> · '+esc(e[1])+(f.sc?' · '+esc(f.sc):'')+'</li>'
-               : '<li><a href="'+esc(GMAP(e[0]))+'" target="_blank" rel="noopener"><b>'+esc(e[1])+'</b></a></li>';
-    }).join("");
-    var links = (s.links||[]).map(function(l){ return '<a class="btn" href="'+esc(href(l[1]))+'" target="_blank" rel="noopener">'+ICON_OUT+esc(l[0])+'</a>'; }).join("");
-    return '<article class="card spot" style="--c:var(--spot)"><div class="hd"><div class="no">'+(i+1)+'</div><div><h3 class="ttl">'+esc(s.n)+'</h3><div class="when">'+esc(s.when)+'</div></div></div>'
-      + '<div class="bd"><p>'+esc(s.d)+'</p><div class="go">'+esc(s.go)+'</div>'
-      + '<ul class="eats" aria-label="근처에서 먹을 곳">'+eats+'</ul>'
-      + '<div class="acts"><button class="btn pinbtn" type="button" data-spot="'+i+'">'+ICON_MAP+'지도</button><a class="btn" href="'+esc(GMAP(s.ll.join(",")))+'" target="_blank" rel="noopener">'+ICON_OUT+'구글 지도</a>'+links+'</div></div></article>';
+  var listEl = document.getElementById("list"), countEl = document.getElementById("count");
+  function visible(){
+    return food.filter(function(f){
+      return (state.g==="all" || f.k===state.g) && (state.a==="all" || f.a===state.a) && (!state.sun || f.sun);
+    }).sort(function(x,y){ return y.sc - x.sc; });
+  }
+  function itemHtml(f){
+    var G = GENRES[f.k];
+    return '<li class="item" data-id="'+f.id+'" style="--c:'+AREAS[f.a].c+'">'
+      + '<button class="row" type="button" aria-expanded="false"><span class="tile" aria-hidden="true">'+G.e+'</span>'
+      + '<span class="tx"><span class="hl">'+esc(f.hl)+'</span><span class="sub">'+esc(f.n)+(f.a==="mitaka"?' · 도보 '+f.walk+'분':' · '+AREAS[f.a].lbl)+(f.sun?'':' · 일 휴무')+'</span></span>'
+      + '<span class="rt">'+star(f.sc)+'<span>'+badges(f)+'</span></span>'+CHEV+'</button>'
+      + '<div class="detail" hidden>'
+      + (f.ja?'<div class="meta">'+where(f)+'<span>'+esc(f.ja)+'</span></div>':'<div class="meta">'+where(f)+'</div>')
+      + '<div>'+esc(f.d)+(f.hm?' <span class="badge top">백명점 '+esc(f.hm)+'</span>':'')+'</div>'
+      + '<div class="hr"><b>영업</b>'+esc(f.h)+'</div>'
+      + '<div class="acts">'+linkBtn("길찾기", GMAP(f.ll.join(",")), true)+linkBtn("타베로그", f.url)
+      + '<button class="btn" type="button" data-pin="'+f.id+'">'+ICON_PIN+'지도에서 보기</button></div>'
+      + '</div></li>';
+  }
+  function renderList(){
+    var v = visible();
+    countEl.textContent = v.length + "곳 · 평점 높은 순";
+    listEl.innerHTML = v.length ? v.map(itemHtml).join("") : '<li class="empty">조건에 맞는 가게가 없어요.</li>';
+    syncFoodPins(v);
+  }
+  genreChips.addEventListener("click",function(e){
+    var b=e.target.closest("button[data-g]"); if(!b) return;
+    state.g = b.getAttribute("data-g");
+    genreChips.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed", x===b ? "true" : "false"); });
+    renderList();
+  });
+  areaSeg.addEventListener("click",function(e){
+    var b=e.target.closest("button[data-a]"); if(!b) return;
+    state.a = b.getAttribute("data-a");
+    areaSeg.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed", x===b ? "true" : "false"); });
+    renderList();
+  });
+  document.getElementById("sunOnly").addEventListener("change",function(e){ state.sun = e.target.checked; renderList(); });
+
+  function openItem(li, open){
+    var btn = li.querySelector(".row"), det = li.querySelector(".detail");
+    li.classList.toggle("open", open); det.hidden = !open; btn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  listEl.addEventListener("click",function(e){
+    var row = e.target.closest(".row");
+    if(row){
+      var li = row.closest(".item"), willOpen = !li.classList.contains("open");
+      openItem(li, willOpen);
+      if(willOpen && isSplit()) focusFood(li.getAttribute("data-id"), false);
+      return;
+    }
+    var pb = e.target.closest("button[data-pin]");
+    if(pb) focusFood(pb.getAttribute("data-pin"), true);
+  });
+  listEl.addEventListener("mouseover",function(e){ var li=e.target.closest(".item"); if(li) hot(li.getAttribute("data-id"), true); });
+  listEl.addEventListener("mouseout",function(e){ var li=e.target.closest(".item"); if(li && !li.contains(e.relatedTarget)) hot(li.getAttribute("data-id"), false); });
+
+  // view toggle (mobile)
+  var split = document.getElementById("split"), viewTabs = document.getElementById("viewTabs");
+  function isSplit(){ return getComputedStyle(viewTabs).display === "none"; }
+  function setView(v, keep){
+    split.setAttribute("data-view", v);
+    viewTabs.querySelectorAll("button").forEach(function(b){ b.setAttribute("aria-selected", b.getAttribute("data-v")===v ? "true" : "false"); });
+    // the map was hidden while laid out, so resize and refit when it appears
+    if(v==="map" && map) setTimeout(function(){ map.invalidateSize(); if(!keep) fit(); }, 30);
+  }
+  viewTabs.addEventListener("click",function(e){ var b=e.target.closest("button[data-v]"); if(b) setView(b.getAttribute("data-v")); });
+
+  // weekend
+  document.getElementById("spots").innerHTML = spots.map(function(s,i){
+    var eats = (s.eats||[]).map(function(id){ var f=foodById[id]; return '<a href="'+esc(f.url)+'" target="_blank" rel="noopener">'+GENRES[f.k].e+' '+esc(f.n)+'</a>'; })
+      .concat((s.eatq||[]).map(function(q){ return '<a href="'+esc(GMAP(q[0]))+'" target="_blank" rel="noopener">'+esc(q[1])+'</a>'; })).join("");
+    return '<article class="spot"><div class="hd"><span class="tile" aria-hidden="true">'+s.e+'</span><div><div class="no">SPOT '+(i+1)+'</div><h3>'+esc(s.n)+'</h3></div></div>'
+      + '<ul class="facts2">'+s.f.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul>'
+      + '<p>'+esc(s.d)+'</p>'
+      + '<div class="eat"><span>근처에서 먹기</span>'+eats+'</div>'
+      + '<div class="acts">'+linkBtn("길찾기", GMAP(s.ll.join(",")), true)+(s.links||[]).map(function(l){ return linkBtn(l[0], href(l[1])); }).join("")
+      + '<button class="btn" type="button" data-spot="'+i+'">'+ICON_PIN+'지도</button></div></article>';
   }).join("");
 
   // saved
-  document.getElementById("savedList").innerHTML = saved.map(function(g){
-    return '<div class="card"><h3>'+esc(g.area)+' <span class="chip n" style="border:0;padding:0;background:none">'+g.items.length+'</span></h3><p class="tm">미타카에서 '+esc(g.tm)+'</p><ul class="rows">'
-      + g.items.map(function(it){ return '<li><a href="'+esc(CID(it[3]))+'" target="_blank" rel="noopener">'+esc(it[0])+'</a></li>'; }).join("")
-      + '</ul></div>';
+  document.getElementById("savedList").innerHTML = saved.map(function(g,i){
+    return '<details class="acc"'+(i===0?' open':'')+'><summary><span class="tile" aria-hidden="true" style="--c:var(--saved)">'+g.e+'</span><span class="tx"><b>'+esc(g.area)+'</b><small>미타카에서 '+esc(g.tm)+'</small></span><span class="n">'+g.items.length+'</span>'+CHEV+'</summary>'
+      + '<ul class="srows">'+g.items.map(function(it){
+          return '<li><a href="'+esc(CID(it[3]))+'" target="_blank" rel="noopener"><span class="e" aria-hidden="true">'+(SAVED_E[it[4]]||"🍽️")+'</span>'+esc(it[0])+'<span class="g">'+esc(it[4])+'</span></a></li>';
+        }).join("")+'</ul></details>';
   }).join("");
 
-  // active tab while scrolling
+  document.getElementById("tipList").innerHTML = tips.map(function(t){ return '<li><span class="e" aria-hidden="true">'+t.e+'</span><div><b>'+esc(t.t)+'</b><p>'+esc(t.d)+'</p></div></li>'; }).join("");
+
+  // active nav while scrolling
   if("IntersectionObserver" in window){
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){ if(en.isIntersecting) setActive(en.target.id); });
-    },{ rootMargin:"-70px 0px -65% 0px" });
+    var io = new IntersectionObserver(function(entries){ entries.forEach(function(en){ if(en.isIntersecting) setActive(en.target.id); }); },{ rootMargin:"-70px 0px -65% 0px" });
     navItems.forEach(function(n){ var el=document.getElementById(n[0]); if(el) io.observe(el); });
   }
 
   // map
-  var mapEl = document.getElementById("map");
-  var filterEl = document.getElementById("mapFilter");
+  var map = null, foodLayer, spotLayer, savedLayer, mode = "food";
+  var mapEl = document.getElementById("map"), mapBar = document.getElementById("mapBar");
+  function syncFoodPins(v){
+    if(!map) return;
+    foodLayer.clearLayers();
+    v.forEach(function(f){ foodLayer.addLayer(f.marker); });
+    if(mode==="food") fit();
+  }
+  function hot(id, on){
+    var f = foodById[id]; if(!f || !f.marker) return;
+    var el = f.marker.getElement(); if(el){ var p = el.querySelector(".pin"); if(p) p.classList.toggle("on", on); }
+    if(on) f.marker.setZIndexOffset(800); else f.marker.setZIndexOffset(0);
+  }
+  function focusFood(id, scroll){
+    var f = foodById[id]; if(!f || !map) return;
+    setMode("food", false);
+    if(!isSplit()) setView("map", true);
+    if(scroll) document.getElementById("explore").scrollIntoView({ behavior:"smooth", block:"start" });
+    setTimeout(function(){ map.invalidateSize(); map.setView(f.ll, 16); f.marker.openPopup(); }, scroll ? 380 : 40);
+  }
+  function fit(){
+    var b;
+    if(mode==="food"){ b = L.latLngBounds([HQ]); if(foodLayer.getLayers().length) b.extend(foodLayer.getBounds()); }
+    else if(mode==="spot"){ b = L.latLngBounds([HQ]).extend(spotLayer.getBounds()); }
+    else b = savedLayer.getBounds();
+    map.fitBounds(b, { padding:[30,30], maxZoom:16 });
+  }
+  function setMode(m, doFit){
+    mode = m;
+    [["food",foodLayer],["spot",spotLayer],["saved",savedLayer]].forEach(function(x){ if(x[0]===m) x[1].addTo(map); else map.removeLayer(x[1]); });
+    mapBar.querySelectorAll(".chip").forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-m")===m ? "true" : "false"); });
+    if(doFit !== false) fit();
+  }
+
   if(!window.L){
-    mapEl.outerHTML = '<div class="mapfail">지도를 불러오지 못했어요. 각 가게의 구글 지도 링크를 이용하세요.</div>';
-    filterEl.hidden = true;
-    return;
-  }
-  var css = getComputedStyle(document.documentElement);
-  function cssVar(name){ return css.getPropertyValue(name).trim(); }
-  var dark = matchMedia("(prefers-color-scheme: dark)").matches;
-  var theme = document.documentElement.getAttribute("data-theme");
-  if(theme) dark = theme === "dark";
+    document.getElementById("mappane").innerHTML = '<div class="mapfail">지도를 불러오지 못했어요. 각 가게의 길찾기 버튼을 이용하세요.</div>';
+  } else {
+    var css = getComputedStyle(document.documentElement);
+    var cssVar = function(n){ return css.getPropertyValue(n).trim(); };
+    var dark = matchMedia("(prefers-color-scheme: dark)").matches;
+    var theme = document.documentElement.getAttribute("data-theme");
+    if(theme) dark = theme === "dark";
+    map = L.map(mapEl, { scrollWheelZoom:false }).setView(HQ, 14);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom:19, className: dark ? "tiles-dark" : "",
+      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+    }).addTo(map);
+    var popup = function(title, sub, links){
+      return '<b>'+esc(title)+'</b>'+(sub?'<small>'+esc(sub)+'</small><br>':'')+links.map(function(l){ return '<a href="'+esc(l[1])+'" target="_blank" rel="noopener">'+esc(l[0])+' ↗</a>'; }).join("");
+    };
+    var dot = function(color, size){ return L.divIcon({ className:"", html:'<div class="pin" style="--c:'+color+'"></div>', iconSize:[size,size], iconAnchor:[size/2,size/2], popupAnchor:[0,-size/2] }); };
 
-  var map = L.map(mapEl, { scrollWheelZoom:false }).setView(HQ, 14);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom:19, className: dark ? "tiles-dark" : "",
-    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
-  }).addTo(map);
+    L.marker(HQ, { icon:L.divIcon({ className:"", html:'<div class="pin hq">HQ</div>', iconSize:[36,36], iconAnchor:[18,18], popupAnchor:[0,-16] }), zIndexOffset:1000, title:"요코가와 본사" })
+      .bindPopup(popup("요코가와 본사", "무사시노시 나카초 2-9-32 · 미타카역 북쪽 도보 약 7분", [["구글 지도", GMAP("横河電機 本社 武蔵野市中町2-9-32")]])).addTo(map);
 
-  function popup(title, sub, links){
-    return '<b>'+esc(title)+'</b>'+(sub?'<small>'+esc(sub)+'</small><br>':'')
-      + links.map(function(l){ return '<a href="'+esc(l[1])+'" target="_blank" rel="noopener">'+esc(l[0])+' ↗</a>'; }).join("");
-  }
-  function dot(color, cls, html, size){
-    return L.divIcon({ className:"", html:'<div class="pin '+(cls||"")+'" style="--c:'+color+'">'+(html||"")+'</div>', iconSize:[size,size], iconAnchor:cls==="spot"?[size/2,size]:[size/2,size/2], popupAnchor:[0,cls==="spot"?-size:-size/2] });
-  }
-
-  var hqMarker = L.marker(HQ, { icon:L.divIcon({ className:"", html:'<div class="pin hq">HQ</div>', iconSize:[34,34], iconAnchor:[17,17], popupAnchor:[0,-16] }), zIndexOffset:1000, title:"요코가와 본사" })
-    .bindPopup(popup("요코가와 본사", "무사시노시 나카초 2-9-32 · 미타카역 북쪽 도보 약 7분", [["구글 지도", GMAP("横河電機 本社 武蔵野市中町2-9-32")]])).addTo(map);
-
-  var groups = {};
-  Object.keys(AREAS).forEach(function(a){ groups[a] = L.featureGroup(); });
-  food.forEach(function(f){
-    var color = cssVar("--"+f.a);
-    f.marker = L.marker(f.ll, { icon:dot(color,"","",16), title:f.n })
-      .bindPopup(popup(f.n, f.g+" · 타베로그 "+f.sc+(f.a==="mitaka"?" · 회사에서 도보 약 "+f.walk+"분":""), [["구글 지도", GMAP(f.ll.join(","))],["타베로그", f.url]]));
-    groups[f.a].addLayer(f.marker);
-  });
-  groups.spot = L.featureGroup();
-  var spotColor = cssVar("--spot");
-  spots.forEach(function(s,i){
-    s.marker = L.marker(s.ll, { icon:dot(spotColor,"spot",'<span>'+(i+1)+'</span>',26), title:s.n })
-      .bindPopup(popup((i+1)+". "+s.n, s.when, [["구글 지도", GMAP(s.ll.join(","))]]));
-    groups.spot.addLayer(s.marker);
-  });
-  groups.saved = L.featureGroup();
-  var savedColor = cssVar("--saved");
-  saved.forEach(function(g){
-    g.items.forEach(function(it){
-      groups.saved.addLayer(L.marker([it[1],it[2]], { icon:dot(savedColor,"","",14), title:it[0] }).bindPopup(popup(it[0], "저장해둔 맛집 · "+g.area, [["구글 지도", CID(it[3])]])));
+    foodLayer = L.featureGroup();
+    food.forEach(function(f){
+      f.marker = L.marker(f.ll, { icon:dot(cssVar("--"+f.a), 16), title:f.n })
+        .bindPopup(popup(GENRES[f.k].e+" "+f.hl, f.n+" · ★"+f.sc.toFixed(2)+(f.a==="mitaka"?" · 도보 "+f.walk+"분":""), [["길찾기", GMAP(f.ll.join(","))],["타베로그", f.url]]));
+      f.marker.on("mouseover", function(){ var li = listEl.querySelector('.item[data-id="'+f.id+'"]'); if(li) li.classList.add("hot"); });
+      f.marker.on("mouseout", function(){ var li = listEl.querySelector('.item[data-id="'+f.id+'"]'); if(li) li.classList.remove("hot"); });
+      f.marker.on("click", function(){
+        var li = listEl.querySelector('.item[data-id="'+f.id+'"]');
+        if(li && isSplit()){ openItem(li, true); li.scrollIntoView({ behavior:"smooth", block:"center" }); }
+      });
     });
-  });
-
-  var MAPF = [["near","회사 근처 전체"],["mitaka","미타카","var(--mitaka)"],["kichi","기치조지","var(--kichi)"],["sakai","무사시사카이","var(--sakai)"],["spot","주말 나들이","var(--spot)"],["saved","저장 맛집(도심)","var(--saved)"]];
-  filterEl.innerHTML = MAPF.map(function(f){
-    return '<button class="chip" type="button" data-f="'+f[0]+'" aria-pressed="false"'+(f[2]?' style="--c:'+f[2]+'"':'')+'>'+(f[2]?'<i></i>':'')+esc(f[1])+'</button>';
-  }).join("");
-  function show(key, fit){
-    Object.keys(groups).forEach(function(k){
-      var on = key==="near" ? (k in AREAS) : k===key;
-      if(on) groups[k].addTo(map); else map.removeLayer(groups[k]);
+    spotLayer = L.featureGroup();
+    var spotColor = cssVar("--spot");
+    spots.forEach(function(s,i){
+      s.marker = L.marker(s.ll, { icon:L.divIcon({ className:"", html:'<div class="pin spot" style="--c:'+spotColor+'"><span>'+(i+1)+'</span></div>', iconSize:[28,28], iconAnchor:[14,28], popupAnchor:[0,-26] }), title:s.n })
+        .bindPopup(popup(s.e+" "+s.n, s.f.join(" · "), [["길찾기", GMAP(s.ll.join(","))]]));
+      spotLayer.addLayer(s.marker);
     });
-    filterEl.querySelectorAll(".chip").forEach(function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-f")===key ? "true" : "false"); });
-    if(fit !== false){
-      var b = L.latLngBounds([HQ]);
-      Object.keys(groups).forEach(function(k){ if(map.hasLayer(groups[k])) b.extend(groups[k].getBounds()); });
-      if(key==="saved") b = groups.saved.getBounds();
-      map.fitBounds(b, { padding:[28,28], maxZoom:16 });
-    }
-  }
-  filterEl.addEventListener("click",function(e){ var b=e.target.closest("button[data-f]"); if(b) show(b.getAttribute("data-f")); });
-  show("near");
+    savedLayer = L.featureGroup();
+    var savedColor = cssVar("--saved");
+    saved.forEach(function(g){ g.items.forEach(function(it){
+      savedLayer.addLayer(L.marker([it[1],it[2]], { icon:dot(savedColor, 14), title:it[0] }).bindPopup(popup((SAVED_E[it[4]]||"🍽️")+" "+it[0], it[4]+" · "+g.area, [["구글 지도", CID(it[3])]])));
+    }); });
 
-  function focus(groupKey, marker, ll){
-    show(groupKey, false);
-    document.getElementById("mapsec").scrollIntoView({ behavior:"smooth", block:"start" });
-    setTimeout(function(){ map.invalidateSize(); map.setView(ll, groupKey==="spot"?13:17); marker.openPopup(); }, 350);
+    mapBar.innerHTML = [["food","맛집","var(--mitaka)"],["spot","주말 나들이","var(--spot)"],["saved","저장 맛집(도심)","var(--saved)"]].map(function(m){
+      return '<button class="chip" type="button" data-m="'+m[0]+'" aria-pressed="false" style="--c:'+m[2]+'"><i></i>'+esc(m[1])+'</button>';
+    }).join("");
+    mapBar.addEventListener("click",function(e){ var b=e.target.closest("button[data-m]"); if(b) setMode(b.getAttribute("data-m")); });
+    setMode("food", false);
+    window.addEventListener("load", function(){ map.invalidateSize(); fit(); });
   }
-  document.addEventListener("click",function(e){
-    var b = e.target.closest("button[data-pin],button[data-spot]"); if(!b) return;
-    if(b.hasAttribute("data-pin")){ var f = foodById[b.getAttribute("data-pin")]; if(f) focus(f.a, f.marker, f.ll); }
-    else { var s = spots[+b.getAttribute("data-spot")]; if(s) focus("spot", s.marker, s.ll); }
+  renderList();
+
+  function showOnMap(m, marker, ll, zoom){
+    if(!map) return;
+    setMode(m, !marker);
+    if(!isSplit()) setView("map", true);
+    document.getElementById("explore").scrollIntoView({ behavior:"smooth", block:"start" });
+    setTimeout(function(){ map.invalidateSize(); if(marker){ map.setView(ll, zoom); marker.openPopup(); } else fit(); }, 380);
+  }
+  document.getElementById("spots").addEventListener("click",function(e){
+    var b = e.target.closest("button[data-spot]"); if(!b) return;
+    var s = spots[+b.getAttribute("data-spot")]; showOnMap("spot", s.marker, s.ll, 13);
   });
-  window.addEventListener("load", function(){ map.invalidateSize(); });
+  document.getElementById("savedOnMap").addEventListener("click",function(){ showOnMap("saved"); });
 })();
 </script>
 </body>
