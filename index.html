@@ -248,12 +248,23 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
   .pick .bd{padding:14px}
   .pick .hl{font-size:17px}
   .pick p{display:none}
-  .split{grid-template-columns:minmax(0,1fr)}
-  /* phones: map sticks under the nav, list scrolls beneath it */
-  .split{gap:10px}
+  .split{gap:12px}
+}
+/* phones and folded screens: map sticks under the nav, list scrolls beneath it.
+   Unfolded foldables and tablets (700px+) keep the side-by-side list and map. */
+@media (max-width:699px){
+  .split{grid-template-columns:minmax(0,1fr);gap:10px}
   .mappane{order:-1;top:56px;height:42vh;min-height:260px;max-height:420px;z-index:500;border-radius:14px}
 }
 @media (max-width:520px){
+  /* short phones (iPhone mini, folded screens): keep the header to one row of facts so the map shows sooner */
+  .hero{padding-top:max(20px,env(safe-area-inset-top,0px))}
+  .hero .wrap{padding-bottom:16px}
+  h1{margin-bottom:10px}
+  .facts{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));padding-right:16px}
+  .facts::-webkit-scrollbar{display:none}
+  #explore{margin-top:16px}
+  #explore .lead{font-size:13px}
   .seg{width:100%}
   .seg button{flex:1;padding:10px 6px}
   .detail{padding-left:14px}
