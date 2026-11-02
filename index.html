@@ -111,6 +111,11 @@ h2{font:700 24px/1.25 var(--font-display);margin:0}
 .badge.top{color:var(--top);background:var(--top-bg)}
 .badge.rsv{color:var(--crit);background:var(--crit-bg)}
 .badge.easy{color:var(--ok);background:var(--ok-bg)}
+.tip{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;font:600 11px/1 var(--font-body);color:var(--muted);border:1px solid currentColor;cursor:help;flex:none;vertical-align:1px}
+.tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:max-content;max-width:240px;background:var(--ink);color:var(--bg);font:400 12.5px/1.5 var(--font-body);padding:8px 10px;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.2);display:none;pointer-events:none;z-index:20;text-align:left;white-space:normal}
+.tip:hover::after,.tip:focus::after{display:block}
+.tip.up-right::after{left:auto;right:-8px;transform:none}
+.tip.up-left::after{left:-8px;transform:none}
 .toggles{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:5px;font:500 13px/1 var(--font-body);padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;cursor:pointer}
 .btn.pri{background:var(--ink);border-color:var(--ink);color:var(--bg)}
@@ -651,7 +656,7 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
 
   function star(sc){ return '<span class="star'+(sc>=3.7?' top':'')+'">★ '+sc.toFixed(2)+'</span>'; }
   function where(f){ return f.a==="mitaka" ? '<span class="walk">회사에서 도보 '+f.walk+'분</span>' : '<span class="walk">'+AREAS[f.a].lbl+' · 한 정거장</span>'; }
-  function badges(f){ return (f.hm?'<span class="badge top">백명점</span>':'')+(f.rsv?'<span class="badge rsv">예약</span>':'')+(f.lw?'<span class="badge easy">줄 적음</span>':''); }
+  function badges(f){ return (f.hm?'<span class="badge top">백명점</span>':'')+(f.rsv?'<span class="badge rsv">예약</span>':'')+(f.lw?'<span class="badge easy" title="예약 가능 여부와 좌석 수로 추정했어요. 실제 대기 시간 데이터는 아니라서, 피크 시간이나 주말엔 줄이 생길 수 있어요.">줄 적음</span>':''); }
   function linkBtn(label, url, pri){ return '<a class="btn'+(pri?' pri':'')+'" href="'+esc(url)+'" target="_blank" rel="noopener">'+ICON_OUT+esc(label)+'</a>'; }
 
   // nav
@@ -714,7 +719,7 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
   var areaSeg = document.getElementById("areaSeg");
   areaSeg.innerHTML = [["all","전체 지역"]].concat(Object.keys(AREAS).map(function(k){ return [k, AREAS[k].lbl]; })).map(function(a,i){
     return '<button type="button" data-a="'+a[0]+'" aria-pressed="'+(i===0)+'">'+esc(a[1])+'</button>';
-  }).join("") + '<span class="toggles"><label class="sun"><input type="checkbox" id="easyOnly">웨이팅 적은 곳</label><label class="sun"><input type="checkbox" id="sunOnly">일요일 영업</label></span>';
+  }).join("") + '<span class="toggles"><label class="sun"><input type="checkbox" id="easyOnly">웨이팅 적은 곳</label><span class="tip up-right" tabindex="0" role="note" aria-label="예약 가능 여부와 좌석 수로 추정했어요. 실제 대기 시간 데이터는 아니라서, 피크 시간이나 주말엔 줄이 생길 수 있어요." data-tip="예약 가능 여부와 좌석 수로 추정했어요. 실제 대기 시간 데이터는 아니라서, 피크 시간이나 주말엔 줄이 생길 수 있어요.">i</span><label class="sun"><input type="checkbox" id="sunOnly">일요일 영업</label></span>';
 
   var listEl = document.getElementById("list"), countEl = document.getElementById("count");
   function visible(){
@@ -732,7 +737,7 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
       + (f.ja?'<div class="meta">'+where(f)+'<span>'+esc(f.ja)+'</span></div>':'<div class="meta">'+where(f)+'</div>')
       + '<div>'+esc(f.d)+(f.hm?' <span class="badge top">백명점 '+esc(f.hm)+'</span>':'')+'</div>'
       + '<div class="hr"><b>영업</b>'+esc(f.h)+'</div>'
-      + (f.lw?'<div class="hr"><b>웨이팅</b>'+esc(f.lw)+'</div>':'')
+      + (f.lw?'<div class="hr"><b>웨이팅</b>줄 적을 것으로 추정 · '+esc(f.lw)+'</div>':'')
       + '<div class="acts">'+linkBtn("길찾기", GMAP(f.ll.join(",")), true)+linkBtn("타베로그", f.url)
       + '<button class="btn" type="button" data-pin="'+f.id+'">'+ICON_PIN+'지도에서 보기</button></div>'
       + '</div></li>';
@@ -803,7 +808,7 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
       + '<ul class="facts2">'+s.f.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul>'
       + '<p>'+esc(s.d)+'</p>'
       + (eats ? '<div class="eat"><span>근처에서 먹기</span>'+eats+'</div>' : '')
-      + (s.easy ? '<div class="easyeat"><span class="lbl"><i></i>줄 적은 근처 맛집</span><ul>'+s.easy.map(easyRow).join("")+'</ul></div>' : '')
+      + (s.easy ? '<div class="easyeat"><span class="lbl"><i></i>줄 적은 근처 맛집<span class="tip up-left" tabindex="0" role="note" aria-label="예약 가능 여부와 좌석 수로 추정했어요. 실제 대기 시간 데이터는 아니라서, 피크 시간이나 주말엔 줄이 생길 수 있어요." data-tip="예약 가능 여부와 좌석 수로 추정했어요. 실제 대기 시간 데이터는 아니라서, 피크 시간이나 주말엔 줄이 생길 수 있어요.">i</span></span><ul>'+s.easy.map(easyRow).join("")+'</ul></div>' : '')
       + '<div class="acts">'+linkBtn("길찾기", GMAP(s.ll.join(",")), true)+(s.links||[]).map(function(l){ return linkBtn(l[0], href(l[1])); }).join("")
       + '<button class="btn" type="button" data-spot="'+i+'">'+ICON_PIN+'지도</button></div></article>';
   }).join("");
@@ -961,7 +966,7 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
     map.addControl(new LocCtl());
     var Legend = L.Control.extend({ options:{ position:"bottomleft" }, onAdd:function(){
       var box = L.DomUtil.create("div", "maplegend");
-      box.innerHTML = '<span><i></i>맛집</span><span><i class="easy"></i>줄 적음</span>';
+      box.innerHTML = '<span><i></i>맛집</span><span><i class="easy"></i>줄 적음(추정)</span><span class="tip up-left" tabindex="0" role="note" aria-label="예약 가능 여부와 좌석 수로 추정했어요. 실제 대기 시간 데이터는 아니라서, 피크 시간이나 주말엔 줄이 생길 수 있어요." data-tip="예약 가능 여부와 좌석 수로 추정했어요. 실제 대기 시간 데이터는 아니라서, 피크 시간이나 주말엔 줄이 생길 수 있어요.">i</span>';
       return box;
     }});
     map.addControl(new Legend());
