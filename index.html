@@ -195,6 +195,16 @@ h2{font:700 24px/1.25 var(--font-display);margin:0}
 .eat{display:flex;flex-wrap:wrap;gap:6px;font-size:13px}
 .eat span{color:var(--faint);font-size:12.5px;width:100%}
 .eat a{display:inline-flex;gap:4px;align-items:center;text-decoration:none;color:var(--ink);background:var(--bg);border-radius:999px;padding:6px 10px}
+.easyeat{border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));border-radius:12px;padding:8px 10px}
+.easyeat .lbl{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--ok);margin:0 0 4px}
+.easyeat .lbl i{width:10px;height:10px;border-radius:50%;border:2.5px solid #12A150;background:var(--surface)}
+.easyeat ul{list-style:none;margin:0;padding:0}
+.easyeat a{display:flex;align-items:center;gap:8px;padding:6px 0;text-decoration:none;color:var(--ink)}
+.easyeat li + li a{border-top:1px solid var(--line)}
+.easyeat .e{width:20px;text-align:center;flex:none}
+.easyeat .t{flex:1;min-width:0}
+.easyeat b{display:block;font-size:13.5px;font-weight:600}
+.easyeat small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .spot .acts{margin-top:auto}
 
 /* saved */
@@ -303,7 +313,7 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
   </section>
 
   <section id="weekend">
-    <div class="sh"><div><h2>주말에 가볼 곳</h2><p class="lead">미타카에서 1시간 안. 11월이라 단풍 명소를 앞에 뒀어요.</p></div></div>
+    <div class="sh"><div><h2>주말에 가볼 곳</h2><p class="lead">미타카에서 1시간 안. 11월이라 단풍 명소를 앞에 뒀어요. 장소마다 예약되거나 자리가 넉넉한 근처 맛집을 붙였어요.</p></div></div>
     <div class="spots" id="spots"></div>
   </section>
 
@@ -480,42 +490,88 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
     { a:"sakai", id:"13229437", k:"drink", hl:"낮부터 여는 야키토리", n:"숯불 야키토리 유", sc:3.47, m:"LD", sun:true, ll:[35.70166,139.54205],
       h:"매일 12:00–23:00(금·토 ~24:00)", d:"일요일에도 영업해요." },
     { a:"sakai", id:"13009996", k:"etc", hl:"동네 쓰촨 요리", n:"하오하오", ja:"好好", sc:3.47, m:"LD", sun:true, ll:[35.70180,139.54234],
-      h:"수–월 12:00–13:30, 18:00–21:00 · 화 휴무", d:"동네 사람들이 다니는 쓰촨 요리집." }
+      h:"수–월 12:00–13:30, 18:00–21:00 · 화 휴무", d:"동네 사람들이 다니는 쓰촨 요리집." },
+
+    // Low-wait picks in Kichijoji and Musashi-Sakai (added 2026-11-02): 3.4+, reservable and/or roomy.
+    { a:"kichi", id:"13005823", k:"western", hl:"노포 킷사텐의 카레", n:"사보 무사시노분코", sc:3.69, hm:"킷사텐 2026", m:"LD", sun:true, ll:[35.70514,139.57690], lw:"평일 예약 · 35석",
+      h:"화–일 10:00–21:00 · 월 휴무", d:"기치조지 킷사텐 백명점. 평일엔 예약이 돼서 줄 없이 들어갈 수 있어요." },
+    { a:"kichi", id:"13047308", k:"western", hl:"공원 앞 나폴리 피자", n:"피자리아 GG 기치조지", sc:3.68, m:"LD", sun:true, ll:[35.70095,139.57870], lw:"예약 가능 · 30석",
+      h:"평일 11:30–15:30, 18:00–22:00 · 주말 11:30–22:00", d:"이노카시라 공원 입구 쪽. 산책 전후로 들르기 좋아요." },
+    { a:"kichi", id:"13144978", k:"western", hl:"예약하고 가는 프렌치 비스트로", n:"비스트로 핫치", sc:3.62, m:"D", sun:true, ll:[35.70429,139.57589], lw:"예약 가능",
+      h:"월·목–일 17:00–23:00 · 화·수 휴무", d:"1인 6,000~8,000엔. 한 달 전부터 예약돼요." },
+    { a:"kichi", id:"13253901", k:"drink", hl:"서서 마시는 비스트로", n:"타치노미 비스트로 Ryo", sc:3.61, m:"LD", sun:true, ll:[35.70075,139.57844], lw:"예약 가능 · 30석",
+      h:"화–일 12:00–15:00, 17:00–22:45 · 월 휴무", d:"공원 입구 쪽. 온라인 예약이 차 있어도 자리가 날 수 있다고 안내돼 있어요." },
+    { a:"kichi", id:"13049661", k:"western", hl:"네팔 카레", n:"사질로 카페", sc:3.59, m:"LD", sun:true, ll:[35.70442,139.58532], lw:"예약 가능",
+      h:"평일 11:30–15:30, 18:00–23:00 · 주말 11:30–23:00", d:"역 동쪽이라 중심가보다 한산해요." },
+    { a:"kichi", id:"13301981", k:"etc", hl:"중식과 교자에 한잔", n:"sinensis", sc:3.56, m:"LD", sun:true, ll:[35.70589,139.57782], lw:"예약 가능 · 42석",
+      h:"매일 11:30–15:00, 17:30–22:30", d:"저녁 1인 6,000~8,000엔. 매일 열어요." },
+    { a:"kichi", id:"13165231", k:"drink", hl:"해산물과 사케", n:"니혼슈안 긴노모리", sc:3.53, m:"LD", sun:true, ll:[35.70511,139.57880], lw:"예약 가능 · 36석",
+      h:"평일 17:00–23:30 · 주말 11:30–23:30", d:"1인 3,000~4,000엔. 주말엔 낮부터 열어요." },
+    { a:"kichi", id:"13276450", k:"drink", hl:"야키토리 갓포", n:"야키토리 갓포 쇼짱 벳테이", sc:3.51, m:"D", sun:true, ll:[35.70213,139.57867], lw:"예약 가능 · 42석",
+      h:"화–금 17:00–23:00, 토 16:00–, 일 15:00– · 월 휴무", d:"꼬치와 일식 요리를 같이. 1인 5,000~6,000엔." },
+    { a:"kichi", id:"13308067", k:"drink", hl:"볏짚에 구운 가다랑어 타타키", n:"와라야키 묘진마루", sc:3.50, m:"LD", sun:true, ll:[35.70395,139.57817], lw:"예약 가능 · 76석",
+      h:"수–월 16:00–23:00(주말은 점심도) · 화 휴무", d:"고치식 와라야키. 볏짚 불에 바로 구워 내요." },
+    { a:"kichi", id:"13005772", k:"meat", hl:"270석 야키니쿠·냉면", n:"리쵸엔 기치조지점", sc:3.49, m:"LD", sun:true, ll:[35.70435,139.57902], lw:"예약 가능 · 270석",
+      h:"수–월 12:00–22:00 · 화 휴무", d:"자리가 아주 많아서 주말 저녁에도 들어가기 쉬워요." },
+    { a:"kichi", id:"13005903", k:"noodle", hl:"역 앞 수타 소바", n:"테우치 소바 호사카", sc:3.49, m:"LD", sun:true, ll:[35.70252,139.57934], lw:"예약 가능",
+      h:"화–일 11:00–20:00 · 월 휴무", d:"중간 휴식 없이 열어요. 주말 예약은 17시 이후만." },
+    { a:"sakai", id:"13051130", k:"noodle", hl:"소바와 오야코동", n:"마스다야 소바도코로 사사이", sc:3.48, m:"LD", sun:true, ll:[35.70336,139.54327], lw:"예약 가능 · 30석",
+      h:"월·화·금–일 11:00–15:00, 17:00–21:00, 수 점심만 · 목 휴무", d:"예약은 11시, 17시 타임만 받아요." },
+    { a:"sakai", id:"13227402", k:"drink", hl:"스시 이자카야, 연중무휴", n:"스기타마 무사시사카이", sc:3.41, m:"LD", sun:true, ll:[35.70315,139.54426], lw:"예약 가능 · 50석",
+      h:"매일 11:30–14:30, 17:00(주말 16:00)–23:00", d:"1인 3,000~4,000엔으로 가볍게." },
+    { a:"sakai", id:"13283721", k:"meat", hl:"숯불 야키니쿠·호르몬", n:"스미비 야키니쿠 쿠우", sc:3.42, m:"D", sun:true, ll:[35.70412,139.54426], lw:"예약 가능 · 31석",
+      h:"월·수–금 17:00–23:00, 토 12:00–, 일 16:00– · 화 휴무", d:"1인 4,000~5,000엔." }
   ];
 
   var spots = [
     { e:"🍁", n:"이노카시라 공원 · 지브리 미술관", ll:[35.6997,139.5735],
       f:["🚃 기치조지 도보 5분","🍁 11월 하순~12월 초","🎫 미술관 예약제"],
       d:"호수 보트를 타고 숲길 따라 미술관까지 걸어요. 미술관 표는 매월 10일 10:00에 다음 달분이 풀려요(12월분은 11/10 예상).",
-      links:[["지브리 티켓","https://l-tike.com/ghibli/"]], eats:["13005878","13005789","13005817"] },
+      links:[["지브리 티켓","https://l-tike.com/ghibli/"]], eats:["13005878","13005789","13005817"], easy:[{f:"13047308"},{f:"13253901"}] },
     { e:"🏮", n:"하모니카 요코초 · 선로드", ll:[35.70375,139.57932],
       f:["🚃 기치조지 북쪽 출구 앞","🌙 저녁이 분위기 좋음"],
       d:"전후 암시장에서 시작된 골목 상점가. 낮엔 붕어빵과 멘치카츠, 밤엔 작은 술집들이 불을 켜요.",
-      links:[["사토 멘치카츠","吉祥寺 さとう メンチカツ"]], eats:["13024975","13152220","13317762"] },
+      links:[["사토 멘치카츠","吉祥寺 さとう メンチカツ"]], eats:["13024975","13152220","13317762"], easy:[{f:"13005772"},{f:"13308067"},{f:"13165231"}] },
     { e:"⛩️", n:"진다이지 · 진다이 식물공원", ll:[35.66746,139.55028],
       f:["🚌 미타카역 버스 20~25분","🍁 11월 중순~하순"],
       d:"도쿄에서 손꼽히게 오래된 절. 참배길 소바집에서 진다이지 소바를 먹는 게 정석이에요. 식물공원은 월요일 휴원.",
-      links:[["진다이 식물공원","神代植物公園"]], eatq:[["深大寺 そば","🥢 참배길 소바"],["深大寺 鬼太郎茶屋","☕ 기타로 찻집"]] },
+      links:[["진다이 식물공원","神代植物公園"]], eatq:[["深大寺 鬼太郎茶屋","☕ 기타로 찻집"]],
+      easy:[{c:"A1326/A132601",id:"13010173",e:"🥢",n:"타몬",hl:"70석 진다이지 소바",sc:3.49,ll:[35.66631,139.55146],lw:"예약 가능 · 70석",h:"화–일 10:00–17:00 · 월 휴무"},
+            {c:"A1326/A132601",id:"13032191",e:"🥢",n:"다이시자야",hl:"절 입구 소바집",sc:3.49,ll:[35.66775,139.54754],lw:"예약 가능 · 88석",h:"10:30–15:00(주말 ~16:00) · 수 휴무"},
+            {c:"A1326/A132601",id:"13068195",e:"🥢",n:"진다이지 소바 키요시",hl:"늦게까지 여는 소바집",sc:3.49,ll:[35.66710,139.54857],lw:"예약 가능 · 36석",h:"수–일 11:00–18:30, 화 ~15:00 · 월 휴무"}] },
     { e:"🏘️", n:"에도도쿄 다테모노엔", ll:[35.71637,139.51274],
       f:["🚃 무사시코가네이 + 버스 5분","🚫 월요일 휴관"],
       d:"에도~쇼와 건물을 옮겨 지은 야외 박물관. '센과 치히로' 거리의 모티브로 알려진 목욕탕과 상점이 있어요.",
-      links:[["공식 사이트","https://www.tatemonoen.jp/"]], eats:["13005922","13177636"] },
+      links:[["공식 사이트","https://www.tatemonoen.jp/"]], eats:["13005922","13177636"],
+      easy:[{c:"A1325/A132501",id:"13117389",e:"🥟",n:"후쿠겐쿄",hl:"역 앞 중식",sc:3.48,ll:[35.70049,139.50743],lw:"예약 가능",h:"11:00–14:30, 17:00–23:30 · 부정기 휴무"},
+            {c:"A1325/A132501",id:"13194983",e:"🍢",n:"야나기다야",hl:"67석 야키토리 이자카야",sc:3.46,ll:[35.70238,139.50558],lw:"예약 가능 · 67석",h:"화–금 12:00–23:00, 주말 13:00–, 월 16:00–"},
+            {c:"A1325/A132501",id:"13142071",e:"🍤",n:"마사타츠",hl:"쿠시카츠·돈카츠",sc:3.48,ll:[35.70547,139.50361],lw:"예약 가능",h:"11:30–14:00, 18:00–22:00 · 수 휴무"}] },
     { e:"🌳", n:"쇼와기념공원 (다치카와)", ll:[35.71226,139.39432],
       f:["🚃 주오선 20분","💛 은행나무 11월 상순~하순","💴 450엔"],
       d:"축제 기간(10/29~11/29)에는 은행나무 길과 일본 정원을 16:30~20:30 라이트업해요. 개원 9:30~21:00.",
-      links:[["공식 사이트","https://www.showakinen-koen.jp/"]], eatq:[["立川 グランデュオ レストラン","🍽️ 다치카와역 식당가"]] },
+      links:[["공식 사이트","https://www.showakinen-koen.jp/"]], eatq:[["立川 グランデュオ レストラン","🍽️ 다치카와역 식당가"]],
+      easy:[{c:"A1329/A132901",id:"13239902",e:"🍛",n:"카레 회의실",hl:"다치카와 카레 상위권",sc:3.59,ll:[35.69871,139.41146],lw:"예약 가능",h:"매일 11:00–22:00(평일 15–17시 휴식)"},
+            {c:"A1329/A132901",id:"13301768",e:"🔥",n:"칸아가리 다치카와",hl:"라이트업 보고 로바타야키",sc:3.55,ll:[35.69649,139.41367],lw:"예약 가능 · 66석 · 현금 불가",h:"평일 17:00–23:00, 주말 16:00–"},
+            {c:"A1329/A132901",id:"13019991",e:"🍤",n:"덴푸라 와카야마",hl:"점심 텐동·덴푸라",sc:3.56,ll:[35.69875,139.41684],lw:"예약 가능 · 31석",h:"화–일 11:30–14:30, 17:00–22:00 · 월 휴무"}] },
     { e:"⛰️", n:"다카오산", ll:[35.63229,139.26998],
       f:["🚃 약 50분","🍁 11월 중순~12월 초","🚡 케이블카"],
       d:"케이블카로 중턱까지, 1시간이면 정상. 모미지 마츠리(10/24~12/13) 기간엔 주말에 붐비니 아침 일찍 출발하세요.",
-      links:[["케이블카","高尾登山電鉄"]], eatq:[["高尾山 とろろそば","🥢 명물 도로로 소바"]] },
+      links:[["케이블카","高尾登山電鉄"]], eatq:[["高尾山 とろろそば","🥢 명물 도로로 소바"]],
+      easy:[{c:"A1329/A132905",id:"13092765",e:"🍛",n:"타카미",hl:"63석 양식 식당",sc:3.47,ll:[35.64232,139.28448],lw:"예약 가능 · 63석",h:"매일 12:00–22:00"},
+            {c:"A1329/A132905",id:"13079771",e:"🍚",n:"장어 가마메시 후지타",hl:"장어 솥밥",sc:3.43,ll:[35.64110,139.28347],lw:"예약 가능(메뉴도 같이 주문)",h:"11:00–14:00, 17:00–20:00 · 목 휴무"}] },
     { e:"🧸", n:"나카노 브로드웨이 · 고엔지", ll:[35.70924,139.66569],
       f:["🚃 주오선 10분","🛍️ 피규어·구제"],
       d:"나카노는 피규어·레트로 굿즈 성지, 고엔지는 구제 옷과 골목 술집. 주말엔 쾌속이 고엔지를 지나치니 각역정차를 타세요.",
-      links:[["고엔지역","高円寺駅"]], eatq:[["中野 青葉 本店","🍜 나카노 아오바"],["高円寺 大将","🍢 고엔지 다이쇼"]] },
+      links:[["고엔지역","高円寺駅"]], eatq:[["中野 青葉 本店","🍜 나카노 아오바"]],
+      easy:[{c:"A1319/A131902",id:"13236734",e:"🐟",n:"마구로마트",hl:"브로드웨이 옆 참치 이자카야",sc:3.63,ll:[35.70956,139.66651],lw:"예약 가능 · 75석",h:"평일 17:00–22:00, 주말 16:00–23:00"},
+            {c:"A1319/A131902",id:"13001082",e:"🍶",n:"다이니치카라 슈조",hl:"200석 대중 술집",sc:3.55,ll:[35.70669,139.66677],lw:"예약 가능 · 200석",h:"월–토 14:00–23:00 · 일 휴무"},
+            {c:"A1319/A131904",id:"13245273",e:"🍛",n:"에릭 사우스 고엔지",hl:"남인도 카레·비리야니",sc:3.61,ll:[35.70533,139.65158],lw:"예약 가능 · 30석",h:"매일 11:30–15:00, 17:00–22:00"}] },
     { e:"🎸", n:"시모키타자와", ll:[35.66130,139.66800],
       f:["🚃 기치조지에서 급행 15분","☕ 카페·레코드"],
       d:"구제 옷, 레코드, 카페 골목. 이노카시라선을 그대로 타면 시부야(저장 맛집 많음)까지 이어져요.",
-      links:[["시모키타 선로 거리","下北線路街"]], eatq:[["下北沢 カレー","🍛 시모키타 카레"]] }
+      links:[["시모키타 선로 거리","下北線路街"]], easy:[{c:"A1318/A131802",id:"13164953",e:"🍛",n:"포니피리카",hl:"홋카이도 수프카레",sc:3.60,ll:[35.66249,139.66944],lw:"예약 가능",h:"매일 11:00–21:30"},
+            {c:"A1318/A131802",id:"13037445",e:"🔥",n:"난반테이 시모키타자와",hl:"오코노미야키",sc:3.59,ll:[35.66076,139.66791],lw:"예약 가능 · 35석",h:"평일 17:00–23:00, 주말 11:30–15:00, 17:00–23:00"},
+            {c:"A1318/A131802",id:"13237179",e:"🐟",n:"아카리",hl:"닭과 생선 숯불구이 이자카야",sc:3.59,ll:[35.66038,139.66758],lw:"예약 가능 · 53석",h:"월–토 16:00(토 14:00)–24:00, 일 14:00–23:00"}] }
   ];
 
   // Picks per situation: f = food id, s = spot index.
@@ -732,14 +788,22 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
   }
   viewTabs.addEventListener("click",function(e){ var b=e.target.closest("button[data-v]"); if(b) setView(b.getAttribute("data-v")); });
 
-  // weekend
+  // weekend: low-wait eats are either a food id or a full record from another Tabelog area
+  spots.forEach(function(s){ (s.easy||[]).forEach(function(x){
+    if(x.f){ var f = foodById[x.f]; x.n=f.n; x.hl=f.hl; x.sc=f.sc; x.ll=f.ll; x.lw=f.lw; x.h=f.h; x.e=GENRES[f.k].e; x.url=f.url; }
+    else x.url = "https://tabelog.com/kr/tokyo/"+x.c+"/"+x.id+"/";
+  }); });
+  function easyRow(x){
+    return '<li><a href="'+esc(x.url)+'" target="_blank" rel="noopener"><span class="e" aria-hidden="true">'+x.e+'</span><span class="t"><b>'+esc(x.hl)+'</b><small>'+esc(x.n)+' · '+esc(x.lw)+'</small></span>'+star(x.sc)+'</a></li>';
+  }
   document.getElementById("spots").innerHTML = spots.map(function(s,i){
     var eats = (s.eats||[]).map(function(id){ var f=foodById[id]; return '<a href="'+esc(f.url)+'" target="_blank" rel="noopener">'+GENRES[f.k].e+' '+esc(f.n)+'</a>'; })
       .concat((s.eatq||[]).map(function(q){ return '<a href="'+esc(GMAP(q[0]))+'" target="_blank" rel="noopener">'+esc(q[1])+'</a>'; })).join("");
     return '<article class="spot"><div class="hd"><span class="tile" aria-hidden="true">'+s.e+'</span><div><div class="no">SPOT '+(i+1)+'</div><h3>'+esc(s.n)+'</h3></div></div>'
       + '<ul class="facts2">'+s.f.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul>'
       + '<p>'+esc(s.d)+'</p>'
-      + '<div class="eat"><span>근처에서 먹기</span>'+eats+'</div>'
+      + (eats ? '<div class="eat"><span>근처에서 먹기</span>'+eats+'</div>' : '')
+      + (s.easy ? '<div class="easyeat"><span class="lbl"><i></i>줄 적은 근처 맛집</span><ul>'+s.easy.map(easyRow).join("")+'</ul></div>' : '')
       + '<div class="acts">'+linkBtn("길찾기", GMAP(s.ll.join(",")), true)+(s.links||[]).map(function(l){ return linkBtn(l[0], href(l[1])); }).join("")
       + '<button class="btn" type="button" data-spot="'+i+'">'+ICON_PIN+'지도</button></div></article>';
   }).join("");
@@ -835,6 +899,11 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
       s.marker = L.marker(s.ll, { icon:L.divIcon({ className:"", html:'<div class="pin spot" style="--c:'+spotColor+'"><span>'+(i+1)+'</span></div>', iconSize:[28,28], iconAnchor:[14,28], popupAnchor:[0,-26] }), title:s.n })
         .bindPopup(popup(s.e+" "+s.n, s.f.join(" · "), [["길찾기", GMAP(s.ll.join(","))]]));
       spotLayer.addLayer(s.marker);
+      (s.easy||[]).forEach(function(x){
+        if(x.f) return; // Kichijoji places already sit in the restaurant layer
+        spotLayer.addLayer(L.marker(x.ll, { icon:L.divIcon({ className:"", html:'<div class="pin easy" style="--c:'+spotColor+'"></div>', iconSize:[20,20], iconAnchor:[10,10], popupAnchor:[0,-10] }), title:x.n })
+          .bindPopup(popup(x.e+" "+x.hl, x.n+" · ★"+x.sc.toFixed(2)+" · 🟢 줄 적음("+x.lw+")", [["길찾기", GMAP(x.ll.join(","))],["타베로그", x.url]])));
+      });
     });
     savedLayer = L.featureGroup();
     var savedColor = cssVar("--saved");
