@@ -86,7 +86,7 @@ h2{font:700 24px/1.25 var(--font-display);margin:0}
 .lead{color:var(--muted);margin:4px 0 0;font-size:14px}
 
 /* now picks */
-#now{margin-top:24px}
+#explore{margin-top:24px}
 .seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px;box-shadow:var(--shadow)}
 .seg button{border:0;background:none;padding:9px 16px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer;color:var(--muted);white-space:nowrap}
 .seg button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
@@ -130,6 +130,7 @@ h2{font:700 24px/1.25 var(--font-display);margin:0}
 .mappane{position:sticky;top:64px;height:calc(100vh - 80px);max-height:760px;min-height:420px;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);background:var(--line);display:flex;flex-direction:column}
 .mapbar{display:flex;gap:6px;padding:10px;background:var(--surface);border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
 .mapbar .chip{padding:7px 11px;font-size:12.5px}
+.mapbar .me-chip{margin-left:auto;color:#1A73E8;border-color:color-mix(in srgb,#1A73E8 40%,var(--line))}
 .mapbar .chip i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
 #map{flex:1;min-height:0}
 .count{font-size:13px;color:var(--muted);margin:0 2px 8px}
@@ -153,6 +154,11 @@ h2{font:700 24px/1.25 var(--font-display);margin:0}
 
 /* map pins */
 .pin{width:16px;height:16px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transition:transform .15s}
+.pin.easy{width:20px;height:20px;background:var(--c);border:3px solid #12A150;box-shadow:0 0 0 2px #fff,0 1px 5px rgba(0,0,0,.45)}
+.maplegend{background:var(--surface);color:var(--ink);border-radius:10px;padding:6px 9px;font:500 12px/1.4 var(--font-body);box-shadow:0 1px 4px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center}
+.maplegend span{display:inline-flex;align-items:center;gap:5px}
+.maplegend i{display:inline-block;width:12px;height:12px;border-radius:50%;background:#C9CED6;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.2)}
+.maplegend i.easy{border:2.5px solid #12A150;box-shadow:0 0 0 1px #fff}
 .pin.on{transform:scale(1.7);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 35%,transparent),0 1px 4px rgba(0,0,0,.4)}
 .pin.spot{width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center}
 .pin.spot span{transform:rotate(45deg);font:700 12px/1 var(--font-body);color:#fff}
@@ -228,10 +234,9 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
   .pick .hl{font-size:17px}
   .pick p{display:none}
   .split{grid-template-columns:minmax(0,1fr)}
-  .viewtoggle{display:inline-flex}
-  .mappane{position:relative;top:0;height:68vh;min-height:360px;max-height:none}
-  .split[data-view="list"] .mappane{display:none}
-  .split[data-view="map"] .listpane{display:none}
+  /* phones: map sticks under the nav, list scrolls beneath it */
+  .split{gap:10px}
+  .mappane{order:-1;top:56px;height:42vh;min-height:260px;max-height:420px;z-index:500;border-radius:14px}
 }
 @media (max-width:520px){
   .seg{width:100%}
@@ -263,28 +268,19 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
 </nav>
 
 <main class="wrap">
-  <section id="now">
-    <div class="sh">
-      <div><h2 id="nowTitle">지금 갈 곳</h2><p class="lead" id="nowLead"></p></div>
-      <div class="seg" role="tablist" aria-label="상황 선택" id="nowTabs"></div>
-    </div>
-    <div class="picks" id="picks"></div>
-    <p class="nowtip" id="nowTip"></p>
-  </section>
-
   <section id="explore">
     <div class="sh">
-      <div><h2>맛집 전체</h2><p class="lead">타베로그 평점 상위권에 웨이팅 적은 회사 근처 가게까지 <span id="totalCount"></span>곳이에요. 줄을 누르면 자세히 보여요.</p></div>
+      <div><h2>맛집 지도</h2><p class="lead">타베로그 평점 상위권에 웨이팅 적은 회사 근처 가게까지 <span id="totalCount"></span>곳이에요. 가게를 누르면 지도가 그곳으로 움직여요.</p></div>
       <div class="seg viewtoggle" role="tablist" aria-label="보기 방식" id="viewTabs">
-        <button type="button" role="tab" data-v="list" aria-selected="true">목록</button>
-        <button type="button" role="tab" data-v="map" aria-selected="false">지도</button>
+        <button type="button" role="tab" data-v="map" aria-selected="true">지도</button>
+        <button type="button" role="tab" data-v="list" aria-selected="false">목록</button>
       </div>
     </div>
     <div class="tools">
       <div class="chips" id="genreChips" role="group" aria-label="장르"></div>
       <div class="areaseg" id="areaSeg" role="group" aria-label="지역"></div>
     </div>
-    <div class="split" id="split" data-view="list">
+    <div class="split" id="split" data-view="map">
       <div class="listpane">
         <p class="count" id="count"></p>
         <ul class="list" id="list"></ul>
@@ -295,6 +291,15 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
         <div id="map" role="region" aria-label="지도"></div>
       </div>
     </div>
+  </section>
+
+  <section id="now">
+    <div class="sh">
+      <div><h2 id="nowTitle">지금 갈 곳</h2><p class="lead" id="nowLead"></p></div>
+      <div class="seg" role="tablist" aria-label="상황 선택" id="nowTabs"></div>
+    </div>
+    <div class="picks" id="picks"></div>
+    <p class="nowtip" id="nowTip"></p>
   </section>
 
   <section id="weekend">
@@ -336,7 +341,7 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 (function(){
-  var HQ = [35.7066, 139.5646];
+  var HQ = [35.7074, 139.5644];
   var GMAP = function(q){ return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q); };
   var TABE = function(area,id){ return "https://tabelog.com/kr/tokyo/A1320/"+area+"/"+id+"/"; };
   var CID = function(c){ return "https://maps.google.com/?cid=" + c; };
@@ -595,7 +600,7 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
 
   // nav
   var nav = document.getElementById("nav");
-  var navItems = [["now","지금 갈 곳"],["explore","맛집 지도"],["weekend","주말"],["saved","저장 맛집"],["tips","팁"]];
+  var navItems = [["explore","맛집 지도"],["now","지금 갈 곳"],["weekend","주말"],["saved","저장 맛집"],["tips","팁"]];
   nav.innerHTML = navItems.map(function(n){ return '<a class="chip" href="#'+n[0]+'" data-t="'+n[0]+'">'+esc(n[1])+'</a>'; }).join("");
   var chipEls = nav.querySelectorAll(".chip");
   function setActive(id){
@@ -767,7 +772,7 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
   function hot(id, on){
     var f = foodById[id]; if(!f || !f.marker) return;
     var el = f.marker.getElement(); if(el){ var p = el.querySelector(".pin"); if(p) p.classList.toggle("on", on); }
-    if(on) f.marker.setZIndexOffset(800); else f.marker.setZIndexOffset(0);
+    f.marker.setZIndexOffset(on ? 800 : (f.lw ? 200 : 0));
   }
   function focusFood(id, scroll){
     var f = foodById[id]; if(!f || !map) return;
@@ -813,8 +818,10 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
 
     foodLayer = L.featureGroup();
     food.forEach(function(f){
-      f.marker = L.marker(f.ll, { icon:dot(cssVar("--"+f.a), 16), title:f.n })
-        .bindPopup(popup(GENRES[f.k].e+" "+f.hl, f.n+" · ★"+f.sc.toFixed(2)+(f.a==="mitaka"?" · 도보 "+f.walk+"분":""), [["길찾기", GMAP(f.ll.join(","))],["타베로그", f.url]]));
+      // low-wait places get a green ring so they stand out on the map
+      var icon = f.lw ? L.divIcon({ className:"", html:'<div class="pin easy" style="--c:'+cssVar("--"+f.a)+'"></div>', iconSize:[20,20], iconAnchor:[10,10], popupAnchor:[0,-10] }) : dot(cssVar("--"+f.a), 16);
+      f.marker = L.marker(f.ll, { icon:icon, title:f.n, zIndexOffset: f.lw ? 200 : 0 })
+        .bindPopup(popup(GENRES[f.k].e+" "+f.hl, f.n+" · ★"+f.sc.toFixed(2)+(f.a==="mitaka"?" · 도보 "+f.walk+"분":"")+(f.lw?" · 🟢 줄 적음("+f.lw+")":""), [["길찾기", GMAP(f.ll.join(","))],["타베로그", f.url]]));
       f.marker.on("mouseover", function(){ var li = listEl.querySelector('.item[data-id="'+f.id+'"]'); if(li) li.classList.add("hot"); });
       f.marker.on("mouseout", function(){ var li = listEl.querySelector('.item[data-id="'+f.id+'"]'); if(li) li.classList.remove("hot"); });
       f.marker.on("click", function(){
@@ -835,10 +842,11 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
       savedLayer.addLayer(L.marker([it[1],it[2]], { icon:dot(savedColor, 14), title:it[0] }).bindPopup(popup((SAVED_E[it[4]]||"🍽️")+" "+it[0], it[4]+" · "+g.area, [["구글 지도", CID(it[3])]])));
     }); });
 
-    mapBar.innerHTML = [["food","맛집","var(--mitaka)"],["spot","주말 나들이","var(--spot)"],["saved","저장 맛집(도심)","var(--saved)"]].map(function(m){
+    mapBar.innerHTML = [["food","맛집","var(--mitaka)"],["spot","주말","var(--spot)"],["saved","저장 맛집","var(--saved)"]].map(function(m){
       return '<button class="chip" type="button" data-m="'+m[0]+'" aria-pressed="false" style="--c:'+m[2]+'"><i></i>'+esc(m[1])+'</button>';
-    }).join("");
+    }).join("") + '<button class="chip me-chip" type="button" id="meChip">📍 내 위치</button>';
     mapBar.addEventListener("click",function(e){ var b=e.target.closest("button[data-m]"); if(b) setMode(b.getAttribute("data-m")); });
+    document.getElementById("meChip").addEventListener("click",function(){ if(locBtn) locBtn.click(); });
 
     // My location: browser geolocation (HTTPS only). Position stays in the browser; nothing is sent anywhere.
     var meMarker = null, meCircle = null, watchId = null, firstFix = true, locBtn, msgTimer;
@@ -882,6 +890,12 @@ footer{margin-top:28px;color:var(--muted);font:500 12px/1.6 var(--font-mono)}
       return box;
     }});
     map.addControl(new LocCtl());
+    var Legend = L.Control.extend({ options:{ position:"bottomleft" }, onAdd:function(){
+      var box = L.DomUtil.create("div", "maplegend");
+      box.innerHTML = '<span><i></i>맛집</span><span><i class="easy"></i>줄 적음</span>';
+      return box;
+    }});
+    map.addControl(new Legend());
     setMode("food", false);
     window.addEventListener("load", function(){ map.invalidateSize(); fit(); });
   }
